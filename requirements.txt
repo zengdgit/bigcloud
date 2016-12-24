@@ -1,0 +1,8 @@
+Flask==0.11.1
+Flask-Login==0.4.0
+SQLAlchemy==1.1.4
+Flask-SQLAlchemy==2.1
+PyMySQL==0.7.9
+Flask-Migrate==2.0.2
+Flask-WTF==0.13.1
+WTForms==2.1
