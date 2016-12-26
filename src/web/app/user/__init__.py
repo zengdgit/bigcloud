@@ -5,6 +5,6 @@
 
 from flask import Blueprint
 
-monitor = Blueprint('monitor', __name__)
+user = Blueprint('user', __name__)
 
 from . import views

@@ -22,7 +22,7 @@ manager.add_command('db', MigrateCommand)
 
 @manager.command
 def runserver():
-    # app.debug = True
+    app.debug = True
     app.run(host='0.0.0.0', port=5000)
 
 

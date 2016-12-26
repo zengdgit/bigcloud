@@ -5,6 +5,6 @@
 
 from flask import Blueprint
 
-monitor = Blueprint('monitor', __name__)
+connect = Blueprint('connect', __name__)
 
 from . import views

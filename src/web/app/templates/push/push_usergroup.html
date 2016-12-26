@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content_head %}
+    <div class="container-fluid am-cf">
+        <div class="row">
+            <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
+                <div class="page-header-heading"><span class="am-icon-home page-header-heading-icon"></span> 云推送
+                    <small>管理应用组</small>
+                </div>
+                <p class="page-header-description">应用组的增删改查。应用组内有若干个应用。</p>
+            </div>
+        </div>
+    </div>
+{% endblock content_head %}
+
+{% block content_body %}
+    <div class="row-content am-cf">
+        <div class="widget am-cf">
+            <div class="widget-head am-cf">
+                <div class="widget-title am-fl">应用组</div>
+                <div class="widget-function am-fr">
+                    <a href="javascript:;" class="am-icon-cog"></a>
+                </div>
+            </div>
+            <div class="widget-body am-fr">
+                <div style="height: 400px" class="" id="tpl-echarts-A">
+                    插个表
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content_body %}

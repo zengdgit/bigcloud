@@ -5,11 +5,11 @@
 
 
 from flask import Flask, request, jsonify, render_template
-from . import home
+from . import connect
 from flask_login import login_required
 
 
-@home.route('/')
+@connect.route('/')
 @login_required
 def index():
-    return render_template('home/home.html')
+    return render_template('connect/connect.html')
