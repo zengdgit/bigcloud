@@ -14,7 +14,7 @@ from .forms import LoginForm
 
 @auth.route('/')
 def index():
-    return 'hello world flask'
+    return redirect(url_for('auth.login'))
 
 
 @auth.route('/add/<name>/<password>')
@@ -28,15 +28,6 @@ def add(name, password):
     return 'Add %s user successfully' % name
 
 
-@auth.route('/get/<name>')
-def get(name):
-    try:
-        u = User.query.filter(User.name == name).first()
-    except Exception as e:
-        return 'there is not %s' % name
-    return 'hello %s %s' % (u.name, u.email)
-
-
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -48,7 +39,7 @@ def login():
         if user and user.verify_password(form.password.data):
             login_user(user)
             return redirect(request.args.get('next') or url_for('home.index'))
-        # TODO 最好能在页面能提示用户密码不正确
+            # TODO 最好能在页面能提示用户密码不正确
     return render_template('auth/login.html', year=time.strftime('%Y', time.localtime(time.time())), form=form)
 
 

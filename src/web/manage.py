@@ -4,8 +4,10 @@
 # 2016/12/22 Chen Weijian : Init
 
 from app import app, db
+from flask import redirect, url_for
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager, Shell
+from flask_login import login_required
 
 manager = Manager(app)
 
@@ -18,6 +20,12 @@ manager.add_command("shell", Shell(make_context=make_shell_context))
 
 migrate = Migrate(app, db)
 manager.add_command('db', MigrateCommand)
+
+
+@app.route('/')
+@login_required
+def index():
+    return redirect(url_for('home.index'))
 
 
 @manager.command
