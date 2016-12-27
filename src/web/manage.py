@@ -23,7 +23,7 @@ manager.add_command('db', MigrateCommand)
 @manager.command
 def runserver():
     app.debug = True
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5354)
 
 
 if __name__ == '__main__':
