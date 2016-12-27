@@ -5,13 +5,13 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>大云管理系统</title>
-    <meta name="description" content="大云管理系统应用页面">
+    <meta name="description" content="大云管理系统主应用">
     <meta name="keywords" content="index">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
-    <link rel="icon" type="image/png" href="assets/i/favicon.png">
-    <link rel="apple-touch-icon-precomposed" href="assets/i/app-icon72x72@2x.png">
+    <!--<link rel="icon" type="image/png" href="assets/i/favicon.png">-->
+    <!--<link rel="apple-touch-icon-precomposed" href="assets/i/app-icon72x72@2x.png">-->
     <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
     <script src="{{ url_for('static', filename='js/echarts-3.3.2.min.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/amazeui.min.css') }}"/>
@@ -172,35 +172,38 @@
 
     </header>
     <!-- 风格切换 -->
-    {#        <div class="tpl-skiner">#}
-    {#            <div class="tpl-skiner-toggle am-icon-cog">#}
-    {#            </div>#}
-    {#            <div class="tpl-skiner-content">#}
-    {#                <div class="tpl-skiner-content-title">#}
-    {#                    选择主题#}
-    {#                </div>#}
-    {#                <div class="tpl-skiner-content-bar">#}
-    {#                    <span class="skiner-color skiner-white" data-color="theme-white"></span>#}
-    {#                    <span class="skiner-color skiner-black" data-color="theme-black"></span>#}
-    {#                </div>#}
-    {#            </div>#}
-    {#        </div>#}
+    <!--<div class="tpl-skiner">
+        <div class="tpl-skiner-toggle am-icon-cog">
+        </div>
+        <div class="tpl-skiner-content">
+            <div class="tpl-skiner-content-title">
+                选择主题
+            </div>
+            <div class="tpl-skiner-content-bar">
+                <span class="skiner-color skiner-white" data-color="theme-white"></span>
+                <span class="skiner-color skiner-black" data-color="theme-black"></span>
+            </div>
+        </div>
+    </div>-->
     <!-- 侧边导航栏 -->
     <div class="left-sidebar">
         <!-- 菜单 -->
         <ul class="sidebar-nav">
             <li class="sidebar-nav-link">
-                <a href="{{ url_for('home.index') }}" class="active">
+                <a href="{{ url_for('home.index') }}"
+                   class="{{ 'active' if request.path.startswith('/home') else '' }}">
                     <i class="am-icon-home sidebar-nav-link-logo"></i> 主页
                 </a>
             </li>
             <li class="sidebar-nav-link">
-                <a href="{{ url_for('connect.index') }}">
+                <a href="{{ url_for('connect.index') }}"
+                   class="{{ 'active' if request.path.startswith('/connect') else '' }}">
                     <i class="am-icon-cloud sidebar-nav-link-logo"></i> 云接入
                 </a>
             </li>
             <li class="sidebar-nav-link">
-                <a href="javascript:;" class="sidebar-nav-sub-title">
+                <a href="javascript:;"
+                   class="sidebar-nav-sub-title {{ 'active' if request.path.startswith('/monitor') else '' }}">
                     <i class="am-icon-tachometer sidebar-nav-link-logo"></i> 云监控
                     <span class="am-icon-chevron-up am-fr am-margin-right-sm sidebar-nav-sub-ico"></span>
                 </a>
@@ -212,19 +215,22 @@
                     </li>-->
 
                     <li class="sidebar-nav-link">
-                        <a href="{{ url_for('monitor.info') }}">
+                        <a href="{{ url_for('monitor.info') }}"
+                           class="{{ 'sub-active' if request.path.startswith('/monitor/info') else '' }}">
                             <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 监控总览
                         </a>
                     </li>
 
                     <li class="sidebar-nav-link">
-                        <a href="{{ url_for('monitor.channel') }}">
+                        <a href="{{ url_for('monitor.channel') }}"
+                           class="{{ 'sub-active' if request.path.startswith('/monitor/channel') else '' }}">
                             <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 信道监控
                         </a>
                     </li>
 
                     <li class="sidebar-nav-link">
-                        <a href="{{ url_for('monitor.log') }}">
+                        <a href="{{ url_for('monitor.log') }}"
+                           class="{{ 'sub-active' if request.path.startswith('/monitor/log') else '' }}">
                             <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 日志详情
                         </a>
                     </li>
@@ -232,37 +238,43 @@
             </li>
 
             <li class="sidebar-nav-link">
-                <a href="javascript:;" class="sidebar-nav-sub-title">
+                <a href="javascript:;"
+                   class="sidebar-nav-sub-title {{ 'active' if request.path.startswith('/push') else '' }}">
                     <i class="am-icon-mixcloud sidebar-nav-link-logo"></i> 云推送
                     <span class="am-icon-chevron-up am-fr am-margin-right-sm sidebar-nav-sub-ico"></span>
                 </a>
                 <ul class="sidebar-nav sidebar-nav-sub am-collapse am-in">
                     <li class="sidebar-nav-link">
-                        <a href="{{ url_for('push.littlecloud') }}">
+                        <a href="{{ url_for('push.littlecloud') }}"
+                           class="{{ 'sub-active' if request.path.startswith('/push/littlecloud') else '' }}">
                             <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 推送小云
                         </a>
                     </li>
 
                     <li class="sidebar-nav-link">
-                        <a href="{{ url_for('push.usergroup') }}">
+                        <a href="{{ url_for('push.usergroup') }}"
+                           class="{{ 'sub-active' if request.path.startswith('/push/usergroup') else '' }}">
                             <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 管理应用组
                         </a>
                     </li>
 
                     <li class="sidebar-nav-link">
-                        <a href="{{ url_for('push.application') }}">
+                        <a href="{{ url_for('push.application') }}"
+                           class="{{ 'sub-active' if request.path.startswith('/push/application') else '' }}">
                             <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 注册应用信息
                         </a>
                     </li>
 
                     <li class="sidebar-nav-link">
-                        <a href="{{ url_for('push.package') }}">
+                        <a href="{{ url_for('push.package') }}"
+                           class="{{ 'sub-active' if request.path.startswith('/push/package') else '' }}">
                             <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 上传应用安装包
                         </a>
                     </li>
 
                     <li class="sidebar-nav-link">
-                        <a href="{{ url_for('push.classification_of_application') }}">
+                        <a href="{{ url_for('push.classification_of_application') }}"
+                           class="{{ 'sub-active' if request.path.startswith('/push/classification_of_application') else '' }}">
                             <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 新建应用功能分类
                         </a>
                     </li>
@@ -270,7 +282,7 @@
             </li>
 
             <li class="sidebar-nav-link">
-                <a href="{{ url_for('user.index') }}">
+                <a href="{{ url_for('user.index') }}" class="{{ 'active' if request.path.startswith('/user') else '' }}">
                     <i class="am-icon-user sidebar-nav-link-logo"></i> 用户管理
                 </a>
             </li>
@@ -289,42 +301,45 @@
 
         {% block content_head %}
 
-        <div class="container-fluid am-cf">
-            <div class="row">
-                <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
-                    <div class="page-header-heading"><span class="am-icon-home page-header-heading-icon"></span> 【示例】图表
-                        <small>【示例】Amaze UI</small>
+            <div class="container-fluid am-cf">
+                <div class="row">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
+                        <div class="page-header-heading"><span class="am-icon-home page-header-heading-icon"></span>
+                            【示例】图表
+                            <small>【示例】Amaze UI</small>
+                        </div>
+                        <p class="page-header-description">【示例】图表组件使用的是 <a href="http://echarts.baidu.com">【示例】百度图表echarts</a>。
+                        </p>
                     </div>
-                    <p class="page-header-description">【示例】图表组件使用的是 <a href="http://echarts.baidu.com">【示例】百度图表echarts</a>。</p>
-                </div>
-                <div class="am-u-lg-3 tpl-index-settings-button">
-                    <button type="button" class="page-header-button"><span class="am-icon-paint-brush"></span> 【示例】设置
-                    </button>
+                    <div class="am-u-lg-3 tpl-index-settings-button">
+                        <button type="button" class="page-header-button"><span class="am-icon-paint-brush"></span>
+                            【示例】设置
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        {% endblock content_head%}
+        {% endblock content_head %}
 
         {% block content_body %}
 
-        <div class="row-content am-cf">
-            <div class="widget am-cf">
-                <div class="widget-head am-cf">
-                    <div class="widget-title am-fl">【示例】折线</div>
-                    <div class="widget-function am-fr">
-                        <a href="javascript:;" class="am-icon-cog"></a>
+            <div class="row-content am-cf">
+                <div class="widget am-cf">
+                    <div class="widget-head am-cf">
+                        <div class="widget-title am-fl">【示例】折线</div>
+                        <div class="widget-function am-fr">
+                            <a href="javascript:;" class="am-icon-cog"></a>
+                        </div>
                     </div>
-                </div>
-                <div class="widget-body am-fr">
-                    <div style="height: 400px" class="" id="tpl-echarts-A">
-                        【示例】
+                    <div class="widget-body am-fr">
+                        <div style="height: 400px" class="" id="tpl-echarts-A">
+                            【示例】
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        {% endblock content_body%}
+        {% endblock content_body %}
     </div>
 
 
