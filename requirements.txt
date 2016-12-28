@@ -6,3 +6,4 @@ PyMySQL==0.7.9
 Flask-Migrate==2.0.2
 Flask-WTF==0.13.1
 WTForms==2.1
+sqlalchemy-utils==0.32.12

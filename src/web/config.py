@@ -9,9 +9,6 @@
 #
 # 2016/2/16 Chen Weijian : Init
 
-
-# TODO 暂时用不到这个配置文件
-
 import os
 from werkzeug.security import generate_password_hash as gen_hash
 
@@ -79,7 +76,7 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = from_env('SQLALCHEMY_DATABASE_URI') or \
-        'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
+                              'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
     # CELERY_RESULT_BACKEND = from_env('CELERY_RESULT_BACKEND') or \
     #     'db+sqlite:///' + os.path.join(basedir, 'celery-test.sqlite')
     # PRESERVE_CONTEXT_ON_EXCEPTION = True
@@ -87,7 +84,7 @@ class TestingConfig(Config):
 
 class ProductConfig(Config):
     SQLALCHEMY_DATABASE_URI = from_env('SQLALCHEMY_DATABASE_URI') or \
-         'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+                              'sqlite:///' + os.path.join(basedir, 'data.sqlite')
     # CELERY_RESULT_BACKEND = from_env('CELERY_RESULT_BACKEND') or \
     #     'db+sqlite:///' + os.path.join(basedir, 'celery.sqlite')
     # SSL_DISABLE = from_env_bool('SSL_DISABLE', False)
@@ -100,4 +97,3 @@ config = {
 
     'default': DevelopmentConfig,
 }
-
