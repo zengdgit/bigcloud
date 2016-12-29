@@ -78,8 +78,10 @@ class LittleCloud(db.Model):
         db.session.add(self)
         db.session.commit()
 
-
-    # # @staticmethod
-    # def get_all(self):
-    #     a = 123
-    #     pass
+    @staticmethod
+    def get_all():
+        '''
+        获取所有LittleCloud实例。
+        :return:
+        '''
+        return LittleCloud.query.all()

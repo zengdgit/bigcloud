@@ -3,7 +3,7 @@ $(function () {
     autoLeftNav();
     $(window).resize(function () {
         autoLeftNav();
-        console.log($(window).width())
+        // console.log($(window).width())
     });
 })
 

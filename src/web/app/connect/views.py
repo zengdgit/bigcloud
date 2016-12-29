@@ -19,8 +19,24 @@ def index():
 @connect.route('/api/littlecloud', methods=['GET'])
 @login_required
 def get_all_littleclouds():
-    # littleclouds = LittleCloud
-    return render_template('connect/connect.html')
+    littleclouds = LittleCloud.get_all()
+    dic = []
+    for i in littleclouds:
+        item = {
+            "id": i.id,
+            "name": i.name,
+            "url": i.url,
+            "is_connectible": i.is_connectible,
+            "is_connected": i.is_connected,
+            "phone": i.phone,
+            "email": i.email,
+            "ip": str(i.ip),
+            "port": i.port,
+            "protocol": i.protocol,
+        }
+        dic.append(item)
+    res = {"result": True, "data": dic}
+    return jsonify(res)
 
 
 @connect.route('/api/littlecloud/', methods=['POST'])
