@@ -22,10 +22,109 @@
                 </div>
             </div>
             <div class="widget-body am-fr">
-                <div style="height: 400px" class="" id="tpl-echarts-A">
-                    {{小云列表}}
+                <div style="min-height: 400px;width: 98%;margin: auto" class="" id="tpl-echarts-A">
+{#                    <table id="littlecloud-table" class="am-table am-table-striped am-table-bordered am-table-compact am-text-nowrap">#}
+                    <table width="100%" id="littlecloud-table" class="am-table am-table-compact am-table-striped tpl-table-black am-text-nowrap">
+                        <thead>
+                        <tr>
+{#                            <th class="center"><label><input type="checkbox"/><span class="lbl"></span></label></th>#}
+                            <th>云平台名称</th>
+                            <th>平台主页</th>
+                            <th>接入IP</th>
+                            <th>接入端口</th>
+                            <th>接入协议</th>
+                            <th title="开启后小云才能接入">待接入</th>
+                            <th>联系邮箱</th>
+                            <th>联系电话</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+{#                        <tbody>#}
+{#                        {% for cloud in cloud_list %}#}
+{#                            <tr>#}
+{#                                <input type="hidden" id="cloud_{{ cloud.id }}" value="{{ cloud.id }}"/>#}
+{#                                <td class='center'>#}
+{#                                    <label>#}
+{#                                        <input type='checkbox' id="{{ cloud.id }}" class="cloudCheckBox"/>#}
+{#                                        <span class="lbl"></span>#}
+{#                                    </label>#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    <span id="name_{{ cloud.id }}">{{ cloud.name }}</span>#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    <span id="url_{{ cloud.id }}">{{ cloud.url }}</span>#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    <span id="push_ip_{{ cloud.id }}">{{ cloud.ip }}</span>#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    <span id="push_port_{{ cloud.id }}">{{ cloud.port }}</span>#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    <span id="protocol_{{ cloud.id }}">{{ cloud.protocol }}</span>#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    <label>#}
+{#                                        <input type="hidden" id="hid_status_{{ cloud.id }}" value="{{ cloud.status }}"/>#}
+{#                                        <input name="switch-field-1" class="ace-switch ace-switch-3"#}
+{#                                               id="status_{{ cloud.id }}"#}
+{#                                               type="checkbox" {% if cloud.status == 'ON' %} checked {% endif %}#}
+{#                                               onclick="save_status('{{ cloud.id }}')"/>#}
+{#                                        <span class="lbl"></span>#}
+{#                                    </label>#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    <span id="email_{{ cloud.id }}">{{ cloud.email }}</span>#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    <span id="phone_{{ cloud.id }}">{{ cloud.phone }}</span>#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    <div>#}
+{#                                        <button class='btn btn-mini btn-info' onclick="editById({{ cloud.id }})"#}
+{#                                                title="编辑">#}
+{#                                            <i class='icon-edit'></i>#}
+{#                                        </button>#}
+{#                                        <button class='btn btn-mini btn-danger' onclick="deleteById({{ cloud.id }})"#}
+{#                                                title="删除">#}
+{#                                            <i class='icon-trash'></i>#}
+{#                                        </button>#}
+{#                                    </div>#}
+{#                                </td>#}
+{#                            </tr>#}
+{#                        {% endfor %}#}
+{#                        </tbody>#}
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 {% endblock content_body %}
+
+
+{% block custom_script %}
+    <script>
+        (function () {
+            var tableDic = {
+                responsive: true,
+                "lengthChange": false,
+                "ajax": "api/littlecloud",
+                "oLanguage": {// 汉化
+                    "sLengthMenu": "每页显示 _MENU_ 条记录",
+                    "sZeroRecords": "没有检索到数据",
+                    "sSearch": "", // TODO 不知道为什么搜索框有文字的话，样式会换行，特别不好看。后期优化。
+                },
+{#                "columnDefs": [{#}
+{#                    "targets": -1,#}
+{#                    "data": null,#}
+{#                    "defaultContent": '<button class="btn btn-success btn-xs pass-btn" style="margin-right:10px">通过</button>' +#}
+{#                    '<button class="btn btn-danger btn-xs " data-toggle="modal" data-target="#deleteSource ">拒绝</button>',#}
+{#                    "orderable": false,#}
+{#                }],#}
+            };
+
+            var table = $('#littlecloud-table').DataTable(tableDic);
+        }());
+    </script>
+{% endblock custom_script %}

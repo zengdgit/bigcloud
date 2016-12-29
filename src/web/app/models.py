@@ -77,3 +77,9 @@ class LittleCloud(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+
+    # # @staticmethod
+    # def get_all(self):
+    #     a = 123
+    #     pass

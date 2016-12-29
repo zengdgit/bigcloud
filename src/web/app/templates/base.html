@@ -162,7 +162,7 @@
 
                     <!-- 退出 -->
                     <li class="am-text-sm">
-                        <a href="javascript:;">
+                        <a href="{{ url_for('auth.logout') }}">
                             <span class="am-icon-sign-out"></span> 退出
                         </a>
                     </li>
@@ -282,7 +282,8 @@
             </li>
 
             <li class="sidebar-nav-link">
-                <a href="{{ url_for('user.index') }}" class="{{ 'active' if request.path.startswith('/user') else '' }}">
+                <a href="{{ url_for('user.index') }}"
+                   class="{{ 'active' if request.path.startswith('/user') else '' }}">
                     <i class="am-icon-user sidebar-nav-link-logo"></i> 用户管理
                 </a>
             </li>
@@ -349,6 +350,26 @@
 <script src="{{ url_for('static', filename='js/amazeui.datatables.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/dataTables.responsive.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/base-html-init.js') }}"></script>
+
+{% block custom_script %}
+{% endblock custom_script %}
+
+<script>
+    (function () {
+        // 因为文本换行导致样式丑的问题，所以让输入框默认显示「搜索」提示词。
+        $(".am-datatable-filter .am-input-sm").attr("placeholder", "搜索");
+    }());
+</script>
+
+<style>
+    .am-datatable-info {
+        color: white;
+    }
+
+{#    .am-form-select {#}
+{#        color: black;#}
+{#    }#}
+</style>
 
 </body>
 
