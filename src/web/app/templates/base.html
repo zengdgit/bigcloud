@@ -345,7 +345,12 @@
 
 
 </div>
-</div>
+
+{% block custom_modal %}
+{% endblock custom_modal %}
+
+</body>
+
 <script src="{{ url_for('static', filename='js/amazeui-2.7.2.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/amazeui.datatables.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/dataTables.responsive.min.js') }}"></script>
@@ -403,6 +408,5 @@
     {#    }#}
 </style>
 
-</body>
 
 </html>

@@ -103,10 +103,12 @@
       <file leaf-file-name="connect.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/web/app/templates/connect/connect.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1098">
-              <caret line="98" column="13" lean-forward="false" selection-start-line="98" selection-start-column="13" selection-end-line="98" selection-end-column="13" />
+            <state relative-caret-position="768">
+              <caret line="134" column="40" lean-forward="false" selection-start-line="134" selection-start-column="40" selection-end-line="134" selection-end-column="40" />
               <folding>
-                <element signature="e#979#1028#0#HTML" expanded="true" />
+                <element signature="e#1029#1078#0#HTML" expanded="true" />
+                <element signature="e#2391#2398#0#HTML" expanded="true" />
+                <marker date="1483080041000" expanded="true" signature="7042:7049" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -115,9 +117,14 @@
       <file leaf-file-name="base.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/web/app/templates/base.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-359">
-              <caret line="356" column="6" lean-forward="false" selection-start-line="356" selection-start-column="6" selection-end-line="356" selection-end-column="6" />
-              <folding />
+            <state relative-caret-position="978">
+              <caret line="386" column="22" lean-forward="false" selection-start-line="386" selection-start-column="22" selection-end-line="386" selection-end-column="22" />
+              <folding>
+                <element signature="n#header#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+                <element signature="n#div#1;n#header#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+                <element signature="n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+                <element signature="n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -186,8 +193,8 @@
         <option value="$PROJECT_DIR$/src/web/app/auth/views.py" />
         <option value="$PROJECT_DIR$/src/web/app/static/js/base-html-init.js" />
         <option value="$PROJECT_DIR$/src/web/app/connect/views.py" />
-        <option value="$PROJECT_DIR$/src/web/app/templates/base.html" />
         <option value="$PROJECT_DIR$/src/web/app/models.py" />
+        <option value="$PROJECT_DIR$/src/web/app/templates/base.html" />
         <option value="$PROJECT_DIR$/src/web/app/templates/connect/connect.html" />
       </list>
     </option>
@@ -1231,14 +1238,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/web/app/templates/base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-359">
-          <caret line="356" column="6" lean-forward="false" selection-start-line="356" selection-start-column="6" selection-end-line="356" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/web/app/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
@@ -1278,12 +1277,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/web/app/templates/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="978">
+          <caret line="386" column="22" lean-forward="false" selection-start-line="386" selection-start-column="22" selection-end-line="386" selection-end-column="22" />
+          <folding>
+            <element signature="n#header#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+            <element signature="n#div#1;n#header#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+            <element signature="n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+            <element signature="n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/web/app/templates/connect/connect.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1098">
-          <caret line="98" column="13" lean-forward="false" selection-start-line="98" selection-start-column="13" selection-end-line="98" selection-end-column="13" />
+        <state relative-caret-position="768">
+          <caret line="134" column="40" lean-forward="false" selection-start-line="134" selection-start-column="40" selection-end-line="134" selection-end-column="40" />
           <folding>
-            <element signature="e#979#1028#0#HTML" expanded="true" />
+            <element signature="e#1029#1078#0#HTML" expanded="true" />
+            <element signature="e#2391#2398#0#HTML" expanded="true" />
+            <marker date="1483080041000" expanded="true" signature="7042:7049" ph="{...}" />
           </folding>
         </state>
       </provider>
