@@ -18,26 +18,25 @@
             <div class="widget-head am-cf">
                 <div class="widget-title am-fl">小云白名单</div>
                 <div class="widget-function am-fr">
-                    <a href="javascript:;" class="am-icon-cog"></a>
+                    <button type="button" class="am-btn am-btn-success am-btn-xs am-radius"><i class="am-icon-plus"></i>添加小云
+                    </button>
                 </div>
             </div>
             <div class="widget-body am-fr">
                 <div style="min-height: 400px;width: 98%;margin: auto" class="" id="tpl-echarts-A">
-                    {#                    <table id="littlecloud-table" class="am-table am-table-striped am-table-bordered am-table-compact am-text-nowrap">#}
                     <table width="100%" id="littlecloud-table"
                            class="am-table am-table-compact am-table-striped tpl-table-black am-text-nowrap">
                         <thead>
                         <tr>
-                            {#                            <th class="center"><label><input type="checkbox"/><span class="lbl"></span></label></th>#}
-                            <th>接入权限</th>
-                            <th>小云名称</th>
-                            <th>小云主页</th>
-                            <th>接入IP</th>
-                            <th>接入端口</th>
-                            <th>接入协议</th>
-                            <th>联系邮箱</th>
-                            <th>联系电话</th>
-                            <th>操作</th>
+                            <th class="is_connectible nosort">接入权限</th>
+                            <th class="name">小云名称</th>
+                            <th class="url nosort">小云主页</th>
+                            <th class="ip nosort">接入IP</th>
+                            <th class="port nosort">接入端口</th>
+                            <th class="protocol nosort">接入协议</th>
+                            <th class="email nosort">联系邮箱</th>
+                            <th class="phone nosort">联系电话</th>
+                            <th class="operation nosort">操作</th>
                         </tr>
                         </thead>
                     </table>
@@ -54,9 +53,10 @@
 
     <script>
         (function () {
-            var tableDic = {
+            var table = $('#littlecloud-table').DataTable({
                 responsive: true,
                 "lengthChange": false,
+                "order": [[1, 'asc' ]],
                 "ajax": "api/littlecloud",
                 "oLanguage": {// 汉化
                     "sLengthMenu": "每页显示 _MENU_ 条记录",
@@ -84,22 +84,18 @@
                     $('td', row).eq(0).html(switchTemplate);
                 },
                 "columnDefs": [{
-                    "targets": -1,
-                    "data": null,
-                    "defaultContent": '<button class="btn btn-success btn-xs pass-btn" style="margin-right:10px">通过</button>' +
-                    '<button class="btn btn-danger btn-xs " data-toggle="modal" data-target="#deleteSource ">拒绝</button>',
+                    "targets": "nosort",
                     "orderable": false,
+                }, {
+                    "targets": "operation",
+                    "data": null,
+                    "defaultContent": '<button class="am-btn am-btn-primary am-btn-xs am-radius" style="margin-right:10px"><i class="am-icon-edit"></i></button>' +
+                    '<button class="am-btn am-btn-danger am-btn-xs am-radius"><i class="am-icon-trash"></i></button>',
                 }],
-                "initComplete": function() {
+                "initComplete": function () {
                     $('[name="my-checkbox"]').bootstrapSwitch();
                 },
-            };
-
-            var table = $('#littlecloud-table').DataTable(tableDic);
+            });
         }());
-
-{#        function switchTemplate(id) {#}
-{#            #}
-{#        }#}
     </script>
 {% endblock custom_script %}
