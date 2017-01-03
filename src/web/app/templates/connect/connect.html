@@ -50,6 +50,79 @@
 {% endblock content_body %}
 
 {% block custom_modal %}
+    <div class="am-modal am-modal-no-btn" tabindex="-1" id="doc-modal-1">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">
+                <h1>添加小云</h1>
+                <a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+            </div>
+            <div class="am-modal-bd">
+                <form class="am-form am-form-horizontal">
+                    <div class="am-form-group">
+                        <label for="add-form-name" class="am-u-sm-2 am-form-label">小云名称</label>
+                        <div class="am-u-sm-10">
+                            <input type="text" id="add-form-name" placeholder="由数字、26个英文字母或者下划线组成的字符串">
+                        </div>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="add-form-url" class="am-u-sm-2 am-form-label">小云主页</label>
+                        <div class="am-u-sm-10">
+                            <input type="text" id="add-form-url" placeholder="例：www.barry.com">
+                        </div>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="add-form-ip" class="am-u-sm-2 am-form-label">接入IP</label>
+                        <div class="am-u-sm-10">
+                            <input type="text" id="add-form-ip" placeholder="例：10.231.45.38">
+                        </div>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="add-form-port" class="am-u-sm-2 am-form-label">接入端口</label>
+                        <div class="am-u-sm-10">
+                            <input type="text" id="add-form-port" placeholder="例：8000">
+                        </div>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="doc-select-1" class="am-u-sm-2 am-form-label">接入协议</label>
+                        <div class="am-u-sm-10">
+                        <select id="doc-select-1">
+                            <option value="option1">HTTPS</option>
+                            <option value="option2">HTTP</option>
+                        </select>
+                        </div>
+                        <!--<span class="am-form-caret"></span>-->
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="add-form-email" class="am-u-sm-2 am-form-label">联系邮箱</label>
+                        <div class="am-u-sm-10">
+                            <input type="text" id="add-form-email" placeholder="例：barry@gmail.com">
+                        </div>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="add-form-phone" class="am-u-sm-2 am-form-label">联系电话</label>
+                        <div class="am-u-sm-10">
+                            <input type="text" id="add-form-phone" placeholder="例：18819473294" required>
+                        </div>
+                    </div>
+
+                    <div class="am-form-group">
+                        <!--<div class="am-u-sm-10 am-u-sm-offset-2">-->
+                        <div>
+                            <button type="submit" class="am-btn am-btn-default">添加</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
     <div class="am-modal am-modal-prompt" tabindex="-1" id="my-prompt">
         <div class="am-modal-dialog">
             <div class="am-modal-hd">
@@ -58,32 +131,38 @@
             </div>
             <div class="am-modal-bd">
                 <div>
-                <label class="form-span">小云名称: </label>
-                <input type="text" class="am-modal-prompt-input form-input">
+                    <label class="form-span">小云名称: </label>
+                    <input type="text" class="am-modal-prompt-input form-input" required>
                 </div>
                 <div>
-                <label class="form-span">小云主页: </label>
-                <input type="text" class="am-modal-prompt-input form-input">
+                    <label class="form-span">小云主页: </label>
+                    <input type="text" class="am-modal-prompt-input form-input" required>
                 </div>
                 <div>
-                <label class="form-span">接入IP: </label>
-                <input type="text" class="am-modal-prompt-input form-input">
+                    <label class="form-span">接入IP: </label>
+                    <input type="text" class="am-modal-prompt-input form-input">
                 </div>
                 <div>
-                <label class="form-span">接入端口: </label>
-                <input type="text" class="am-modal-prompt-input form-input">
+                    <label class="form-span">接入端口: </label>
+                    <input type="text" class="am-modal-prompt-input form-input">
                 </div>
                 <div>
-                <label class="form-span">接入协议: </label>
-                <input type="text" class="am-modal-prompt-input form-input">
+                    <label class="form-span">接入协议: </label>
+                    <div>
+                        <input type="radio" class="form-input" name="protocol" id="add-form-protocol-https"
+                               value="https" checked>
+                        <label for="add-form-protocol-https" style="margin-right: 80px;">HTTPS</label>
+                        <input type="radio" class="form-input" name="protocol" id="add-form-protocol-http" value="http">
+                        <label for="add-form-protocol-http">HTTP</label>
+                    </div>
                 </div>
                 <div>
-                <label class="form-span">联系邮箱: </label>
-                <input type="text" class="am-modal-prompt-input form-input">
+                    <label class="form-span">联系邮箱: </label>
+                    <input type="text" class="am-modal-prompt-input form-input">
                 </div>
                 <div>
-                <label class="form-span">联系电话: </label>
-                <input type="text" class="am-modal-prompt-input form-input">
+                    <label class="form-span">联系电话: </label>
+                    <input type="text" class="am-modal-prompt-input form-input">
                 </div>
             </div>
             <div class="am-modal-footer">
@@ -146,29 +225,30 @@
             });
 
             $('#add-littlecloud-btn').on('click', function () {
-                $('#my-prompt').modal({
-                    relatedTarget: this,
-                    onConfirm: function (e) {
-                        alert('你输入的是：' + e.data || '')
-                    },
-                    onCancel: function (e) {
-                        alert('不想说!');
-                    },
-                    // dimmer: false,
+                $('#doc-modal-1').modal({
+                    // relatedTarget: this,
+                    // onConfirm: function (e) {
+                    //     // alert('你输入的是：' + e.data || '')
+                    //     console.log(e.data)
+                    // },
+                    // onCancel: function (e) {
+                    //     alert('不想说!');
+                    // },
+                    // // dimmer: false,
                 });
             });
         }());
     </script>
 
     <style>
-    .form-span {
-        width: 100px;
-        margin-bottom: 0px;
-    }
+        .form-span {
+            width: 100px;
+            margin-bottom: 0px;
+        }
 
-    .form-input {
-        margin: 0px auto 15px auto;
-    }
+        .form-input {
+            margin: 0px auto 15px auto;
+        }
     </style>
 
 {% endblock custom_script %}
