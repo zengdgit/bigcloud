@@ -53,7 +53,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/web/app/models.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="375">
@@ -100,17 +100,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="connect.html" pinned="false" current-in-tab="false">
+      <file leaf-file-name="connect.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/web/app/templates/connect/connect.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="177" column="25" lean-forward="false" selection-start-line="177" selection-start-column="25" selection-end-line="177" selection-end-column="25" />
+            <state relative-caret-position="138">
+              <caret line="176" column="69" lean-forward="false" selection-start-line="176" selection-start-column="69" selection-end-line="176" selection-end-column="69" />
               <folding>
                 <element signature="e#1029#1078#0#HTML" expanded="true" />
-                <element signature="e#2402#2409#0#HTML" expanded="true" />
-                <element signature="e#5810#5817#0#HTML" expanded="true" />
-                <element signature="e#6972#6999#0#HTML" expanded="true" />
-                <marker date="1483414832000" expanded="true" signature="5312:5435" ph="..." />
+                <element signature="e#2412#2419#0#HTML" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -1281,20 +1278,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/web/app/templates/connect/connect.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="177" column="25" lean-forward="false" selection-start-line="177" selection-start-column="25" selection-end-line="177" selection-end-column="25" />
-          <folding>
-            <element signature="e#1029#1078#0#HTML" expanded="true" />
-            <element signature="e#2402#2409#0#HTML" expanded="true" />
-            <element signature="e#5810#5817#0#HTML" expanded="true" />
-            <element signature="e#6972#6999#0#HTML" expanded="true" />
-            <marker date="1483414832000" expanded="true" signature="5312:5435" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/web/app/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
@@ -1302,6 +1285,17 @@
           <folding>
             <element signature="e#95#110#0" expanded="true" />
             <marker date="1482995847000" expanded="true" signature="1418:2411" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/web/app/templates/connect/connect.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="138">
+          <caret line="176" column="69" lean-forward="false" selection-start-line="176" selection-start-column="69" selection-end-line="176" selection-end-column="69" />
+          <folding>
+            <element signature="e#1029#1078#0#HTML" expanded="true" />
+            <element signature="e#2412#2419#0#HTML" expanded="true" />
           </folding>
         </state>
       </provider>
