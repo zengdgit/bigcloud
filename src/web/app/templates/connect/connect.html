@@ -133,6 +133,44 @@
         </div>
     </div>
 
+    <div class="am-modal am-modal-alert" tabindex="-1" id="add-error-modal">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">错误</div>
+            <div class="am-modal-bd">
+                添加小云失败！
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn">确定</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="am-modal am-modal-confirm" tabindex="-1" id="confirm-delete-modal">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">警告</div>
+            <div class="am-modal-bd">
+                <!--TODO 最好显示该小云的部分信息，譬如说名字、URL什么的。-->
+                确定要删除这个小云吗？
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="am-modal am-modal-alert" tabindex="-1" id="delete-error-modal">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">错误</div>
+            <div class="am-modal-bd">
+                删除小云失败！
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn">确定</span>
+            </div>
+        </div>
+    </div>
+
 {% endblock custom_modal %}
 
 {% block custom_script %}
@@ -179,10 +217,25 @@
                     "targets": "operation",
                     "data": null,
                     "defaultContent": '<button class="am-btn am-btn-primary am-btn-xs am-radius" style="margin-right:10px"><i class="am-icon-edit"></i></button>' +
-                    '<button class="am-btn am-btn-danger am-btn-xs am-radius"><i class="am-icon-trash"></i></button>',
+                    '<button class="am-btn am-btn-danger am-btn-xs am-radius delete-cloud-button"><i class="am-icon-trash"></i></button>',
                 }],
-                "initComplete": function () {
+                "drawCallback": function () {
+                    // 渲染Switch
                     $('[name="my-checkbox"]').bootstrapSwitch();
+
+                    // 往「删除按钮」注册事件
+                    $(".delete-cloud-button").on('click', function () {
+                        $('#confirm-delete-modal').modal({
+                            relatedTarget: this,
+                            onConfirm: function (options) {
+                                var $link = $(this.relatedTarget);
+                                var tr = $link.closest('tr');
+                                var row = table.row(tr);
+                                var rowData = row.data();
+                                deleteCloudById(rowData.id);
+                            },
+                        });
+                    });
                 },
             });
 
@@ -216,10 +269,11 @@
                     // 提交后的回调函数
                     success: function (responseObject, statusText) {
                         if (responseObject['result']) {
-                            // table.ajax.reload();
-                            location.reload();
+                            table.ajax.reload();
+                            // location.reload();
                         } else {
-                            console.log("添加失败！");
+                            $("#add-error-modal").modal({closeViaDimmer: 0});
+                            console.log(responseObject['message']); // TODO 便于调试的错误信息，后期应删掉
                         }
                     },
                     url: "api/littlecloud",
@@ -229,6 +283,21 @@
 
                 return false;
             });
+
+            function deleteCloudById(id) {
+                var url = "api/littlecloud/" + id.toString();
+                $.ajax({
+                    url: url,
+                    type: 'DELETE',
+                    dataType: 'json',
+                    success: function (data, textStatus, jqXHR) {
+                        table.ajax.reload();
+                    },
+                    error: function (xhr, textStatus) {
+                        $("#delete-error-modal").modal({closeViaDimmer: 0});
+                    },
+                })
+            }
         }());
     </script>
 

@@ -20,7 +20,7 @@ def index():
 @connect.route('/api/littlecloud', methods=['GET'])
 @login_required
 def get_all_littleclouds():
-    littleclouds = LittleCloud.get_all()
+    littleclouds = LittleCloud.query.all()
     dic = []
     for i in littleclouds:
         item = {
@@ -45,6 +45,14 @@ def get_all_littleclouds():
 def add_littlecloud():
     form = LittleCloudForm()
     if form.validate_on_submit():
+        cloud1 = LittleCloud.query.filter(LittleCloud.name == form.name.data).first()
+        cloud2 = LittleCloud.query.filter(LittleCloud.url == form.url.data).first()
+
+        # 防止添加同名称和同URL的小云
+        if cloud1 or cloud2:
+            res_massage = u"Failed! The littlecloud with same name or url have already excisted"
+            return jsonify({"result": False, "data": None, "message": res_massage})
+
         new_cloud = LittleCloud(
             name=form.name.data,
             url=form.url.data,
@@ -56,14 +64,19 @@ def add_littlecloud():
         )
         new_cloud.save()
         return jsonify({"result": True, "data": None, "message": u"Add new littlecloud successfully!"})
-    error = form.error
-    return jsonify({"result": True, "data": None, "message": error})
+    error = form.errors
+    return jsonify({"result": False, "data": None, "message": error})
 
 
 @connect.route('/api/littlecloud/<int:id>', methods=['DELETE'])
 @login_required
 def delete_littlecloud_by_id(id):
-    return render_template('connect/connect.html')
+    cloud = LittleCloud.query.get(int(id))
+    if cloud:
+        cloud.delete()
+        return jsonify({"result": True, "data": None, "message": "Delete the littlecloud successfully!"})
+    res_message = u"Failed! The littlecloud with id %s is not excisted!" % id
+    return jsonify({"result": False, "data": None, "message": res_message})
 
 
 @connect.route('/api/littlecloud/<int:id>', methods=['PUT'])
