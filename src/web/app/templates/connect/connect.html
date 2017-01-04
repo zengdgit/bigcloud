@@ -57,11 +57,14 @@
                 <a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
             </div>
             <div class="am-modal-bd">
-                <form id="add-littlecloud-form" class="am-form am-form-horizontal" data-am-validator>
+                <form id="add-littlecloud-form" class="am-form am-form-horizontal" data-am-validator
+                      method="post" action="api/littlecloud">
+                    <!--<form id="add-littlecloud-form" class="am-form am-form-horizontal" data-am-validator onsubmit="return false;">-->
                     <div class="am-form-group">
                         <label for="add-form-name" class="am-u-sm-2 am-form-label">小云名称</label>
                         <div class="am-u-sm-10">
-                            <input type="text" id="add-form-name" minlength="3" maxlength="20" pattern="^\w+$"
+                            <input type="text" id="add-form-name" name="name" minlength="3" maxlength="20"
+                                   pattern="^\w+$"
                                    placeholder="由数字、26个英文字母或者下划线组成的字符串" required>
                         </div>
                     </div>
@@ -69,14 +72,15 @@
                     <div class="am-form-group">
                         <label for="add-form-url" class="am-u-sm-2 am-form-label">小云主页</label>
                         <div class="am-u-sm-10">
-                            <input type="text" id="add-form-url" placeholder="例：www.barry.com" required>
+                            <input type="text" id="add-form-url" name="url" minlength="1" maxlength="2083"
+                                   placeholder="例：www.barry.com" required>
                         </div>
                     </div>
 
                     <div class="am-form-group">
                         <label for="add-form-ip" class="am-u-sm-2 am-form-label">接入IP</label>
                         <div class="am-u-sm-10">
-                            <input type="text" id="add-form-ip"
+                            <input type="text" id="add-form-ip" name="ip"
                                    pattern="^(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])$"
                                    placeholder="例：10.231.45.38" required>
                         </div>
@@ -85,7 +89,7 @@
                     <div class="am-form-group">
                         <label for="add-form-port" class="am-u-sm-2 am-form-label">接入端口</label>
                         <div class="am-u-sm-10">
-                            <input type="number" id="add-form-port" min="0" max="65535"
+                            <input type="number" id="add-form-port" min="0" max="65535" name="port"
                                    placeholder="例：8000" required>
                         </div>
                     </div>
@@ -93,19 +97,19 @@
                     <div class="am-form-group">
                         <label for="doc-select-1" class="am-u-sm-2 am-form-label">接入协议</label>
                         <div class="am-u-sm-10">
-                            <select id="doc-select-1" required>
+                            <select id="doc-select-1" required name="protocol">
                                 <option value="">请选择</option>
-                                <option value="option1">HTTPS</option>
-                                <option value="option2">HTTP</option>
+                                <option value="HTTPS">HTTPS</option>
+                                <option value="HTTP">HTTP</option>
                             </select>
                         </div>
-                        <!--<span class="am-form-caret"></span>-->
+                        <span class="am-form-caret"></span>
                     </div>
 
                     <div class="am-form-group">
                         <label for="add-form-email" class="am-u-sm-2 am-form-label">联系邮箱</label>
                         <div class="am-u-sm-10">
-                            <input type="email" id="add-form-email"
+                            <input type="email" id="add-form-email" name="email"
                                    placeholder="例：barry@gmail.com" required>
                         </div>
                     </div>
@@ -113,7 +117,7 @@
                     <div class="am-form-group">
                         <label for="add-form-phone" class="am-u-sm-2 am-form-label">联系电话</label>
                         <div class="am-u-sm-10">
-                            <input type="text" id="add-form-phone" pattern="^1((3|5|8){1}\d{1}|70)\d{8}$"
+                            <input type="number" id="add-form-phone" name="phone"
                                    placeholder="例：18819473294" required>
                         </div>
                     </div>
@@ -121,7 +125,7 @@
                     <div class="am-form-group">
                         <!--<div class="am-u-sm-10 am-u-sm-offset-2">-->
                         <div>
-                            <button type="submit" class="am-btn am-btn-success">添加</button>
+                            <button id="add-form-submit-button" type="" class="am-btn am-btn-success">添加</button>
                         </div>
                     </div>
                 </form>
@@ -182,19 +186,48 @@
                 },
             });
 
-            // 「添加小云」按钮的点击事件：弹出「添加小云」Modal。
+            // 「添加小云按钮」的点击事件：弹出「添加小云」Modal。
             $('#add-littlecloud-btn').on('click', function () {
                 $('#add-littlecloud-modal').modal();
             });
 
-            // 「添加小云」Modal 窗口完全关闭的事件：清空「添加小云」表单数据和重置验证。
+            // 「添加小云Modal」窗口完全关闭的事件：清空「添加小云」表单数据和重置验证。
             $('#add-littlecloud-modal').on('closed.modal.amui', function () {
                 // 清空表单数据
                 $("#add-littlecloud-form").get(0).reset();
 
                 // 重置表单验证
-                $("#add-littlecloud-form").validator('destroy'); 
+                $("#add-littlecloud-form").validator('destroy');
                 $("#add-littlecloud-form").validator();
+            });
+
+            // 「添加小云表单」的提交方法：采用异步提交的方式。
+            $('#add-littlecloud-form').submit(function (e) {
+                $(this).ajaxSubmit({
+                    // 提交前的回调函数：用于判断表单验证是否通过。
+                    beforeSubmit: function (formData, jqForm, options) {
+                        var formValidity = $('#add-littlecloud-form').validator('isFormValid');
+                        if (formValidity) {
+                            $('#add-littlecloud-modal').modal('close');
+                            return true;
+                        }
+                        return false;
+                    },
+                    // 提交后的回调函数
+                    success: function (responseObject, statusText) {
+                        if (responseObject['result']) {
+                            // table.ajax.reload();
+                            location.reload();
+                        } else {
+                            console.log("添加失败！");
+                        }
+                    },
+                    url: "api/littlecloud",
+                    type: "post",
+                    dataType: "json" // 接受服务端返回的类型
+                });
+
+                return false;
             });
         }());
     </script>

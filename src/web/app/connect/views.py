@@ -4,13 +4,14 @@
 # 2016/12/22 Chen Weijian : Init
 
 
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, url_for, redirect
 from . import connect
 from ..models import LittleCloud
 from flask_login import login_required
+from .forms import LittleCloudForm
 
 
-@connect.route('/', methods=['GET'])
+@connect.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
     return render_template('connect/connect.html')
@@ -35,14 +36,28 @@ def get_all_littleclouds():
             "protocol": i.protocol,
         }
         dic.append(item)
-    res = {"result": True, "data": dic}
+    res = {"result": True, "data": dic, "message": u"Get all littleclouds successfully!"}
     return jsonify(res)
 
 
-@connect.route('/api/littlecloud/', methods=['POST'])
+@connect.route('/api/littlecloud', methods=['POST'])
 @login_required
 def add_littlecloud():
-    return render_template('connect/connect.html')
+    form = LittleCloudForm()
+    if form.validate_on_submit():
+        new_cloud = LittleCloud(
+            name=form.name.data,
+            url=form.url.data,
+            phone=form.phone.data,
+            email=form.email.data,
+            ip=form.ip.data,
+            port=form.port.data,
+            protocol=form.protocol.data,
+        )
+        new_cloud.save()
+        return jsonify({"result": True, "data": None, "message": u"Add new littlecloud successfully!"})
+    error = form.error
+    return jsonify({"result": True, "data": None, "message": error})
 
 
 @connect.route('/api/littlecloud/<int:id>', methods=['DELETE'])
