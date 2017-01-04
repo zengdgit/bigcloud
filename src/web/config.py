@@ -65,7 +65,7 @@ class Config:
 class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:admin123@localhost:3306/bigcloud?charset=utf8'
     # DEBUG = True
-    SQLALCHEMY_ECHO = True
+    # SQLALCHEMY_ECHO = True
     # SQLALCHEMY_DATABASE_URI = from_env('SQLALCHEMY_DATABASE_URI') or \
     #      'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
     # CELERY_RESULT_BACKEND = from_env('CELERY_RESULT_BACKEND') or \
