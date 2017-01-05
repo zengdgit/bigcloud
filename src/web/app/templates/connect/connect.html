@@ -1,12 +1,18 @@
 {% extends "base.html" %}
 
+<!--
+TODO
+- 添加或修改小云时，对于名称和主页这种唯一的属性，最好远程验证一下。
+- 对于操作不成功弹出的 Alert 窗口，失败信息可以详细一点。
+-->
+
 {% block content_head %}
     <div class="container-fluid am-cf">
         <div class="row">
             <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
                 <div class="page-header-heading"><span class="am-icon-cloud page-header-heading-icon"></span> 云接入
                 </div>
-                <p class="page-header-description">维护一份小云白名单，用于控制小云接入的管理。</p>
+                <p class="page-header-description">维护一份小云白名单，用于管理小云的接入权限。</p>
             </div>
         </div>
     </div>
@@ -45,8 +51,6 @@
             </div>
         </div>
     </div>
-
-
 {% endblock content_body %}
 
 {% block custom_modal %}
@@ -60,7 +64,6 @@
             <div class="am-modal-bd">
                 <form id="add-littlecloud-form" class="am-form am-form-horizontal" data-am-validator
                       method="post" action="api/littlecloud">
-                    <!--<form id="add-littlecloud-form" class="am-form am-form-horizontal" data-am-validator onsubmit="return false;">-->
                     <div class="am-form-group">
                         <label for="add-form-name" class="am-u-sm-2 am-form-label">小云名称</label>
                         <div class="am-u-sm-10">
@@ -134,7 +137,6 @@
         </div>
     </div>
 
-
     <!--编辑小云的Modal-->
     <div class="am-modal am-modal-no-btn" tabindex="-1" id="edit-littlecloud-modal">
         <div class="am-modal-dialog">
@@ -145,7 +147,6 @@
             <div class="am-modal-bd">
                 <form id="edit-littlecloud-form" class="am-form am-form-horizontal" data-am-validator
                       method="" action="">
-                    <!--<form id="add-littlecloud-form" class="am-form am-form-horizontal" data-am-validator onsubmit="return false;">-->
                     <input type="number" id="edit-form-id" style="display: none;">
                     <div class="am-form-group">
                         <label for="edit-form-name" class="am-u-sm-2 am-form-label">小云名称</label>
@@ -274,6 +275,18 @@
         </div>
     </div>
 
+    <!--转换小云接入权限错误的Modal-->
+    <div class="am-modal am-modal-alert" tabindex="-1" id="toggle-error-modal">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">错误</div>
+            <div class="am-modal-bd">
+                改变小云接入权限失败！
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn">确定</span>
+            </div>
+        </div>
+    </div>
 {% endblock custom_modal %}
 
 {% block custom_script %}
@@ -288,7 +301,7 @@
                 "lengthChange": false,
                 "order": [[1, 'asc']],
                 "ajax": "api/littlecloud",
-                "oLanguage": {// 汉化
+                "oLanguage": {
                     "sLengthMenu": "每页显示 _MENU_ 条记录",
                     "sZeroRecords": "没有检索到数据",
                     "sSearch": "", // TODO 不知道为什么搜索框前面有文字的话，样式会换行，特别不好看。后期优化。
@@ -323,8 +336,34 @@
                     '<button class="am-btn am-btn-danger am-btn-xs am-radius delete-cloud-button"><i class="am-icon-trash"></i></button>',
                 }],
                 "drawCallback": function () {
-                    // 渲染Switch
+                    // 渲染Switch，并注册切换事件：用Ajax来发送请求。
                     $('[name="my-checkbox"]').bootstrapSwitch();
+                    $('[name="my-checkbox"]').on('switchChange.bootstrapSwitch', function (event, state) {
+                        var thisSwitch = $(this);
+                        // 先切换成禁用状态。
+                        thisSwitch.bootstrapSwitch('toggleDisabled');
+
+                        var tr = this.closest('tr');
+                        var row = table.row(tr);
+                        var rowData = row.data();
+                        var id = rowData.id;
+                        var url = 'api/littlecloud/' + id.toString() + '/toggle_access_permission';
+                        $.ajax({
+                            url: url,
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function (data, textStatus, jqXHR) {
+                                // 切换回可用状态。
+                                thisSwitch.bootstrapSwitch('toggleDisabled');
+                                if (data["result"] === false) {
+                                    // 第二个参数设置为 true 时跳过执行 switchChange，才能避免死循环。
+                                    thisSwitch.bootstrapSwitch('toggleState', true);
+
+                                    $("#toggle-error-modal").modal({closeViaDimmer: 0});
+                                }
+                            },
+                        })
+                    });
 
                     // 往「删除按钮」注册点击事件：渲染出删除Modal。
                     $(".delete-cloud-button").on('click', function () {
@@ -346,10 +385,10 @@
                         var row = table.row(tr);
                         var rowData = row.data();
 
-                        // 清空表单数据
+                        // 清空表单数据。
                         $("#edit-littlecloud-form").get(0).reset();
 
-                        // 覆盖表单数据
+                        // 覆盖表单数据。
                         $("#edit-form-id").val(rowData.id);
                         $("#edit-form-name").val(rowData.name);
                         $("#edit-form-url").val(rowData.url);
@@ -359,10 +398,10 @@
                         $("#edit-form-email").val(rowData.email);
                         $("#edit-form-phone").val(rowData.phone);
 
-                        // 渲染编辑modal
+                        // 渲染编辑modal。
                         $('#edit-littlecloud-modal').modal();
 
-                        // 激活表单验证样式（渲染出modal后激活才有效果）
+                        // 激活表单验证样式（渲染出modal后激活才有效果）。
                         var isFormValid = $('#edit-littlecloud-form').validator('isFormValid');
                     });
                 },
@@ -375,10 +414,10 @@
 
             // 「添加小云Modal」窗口完全关闭的事件：清空「添加小云」表单数据和重置验证。
             $('#add-littlecloud-modal').on('closed.modal.amui', function () {
-                // 清空表单数据
+                // 清空表单数据。
                 $("#add-littlecloud-form").get(0).reset();
 
-                // 重置表单验证
+                // 重置表单验证。
                 $("#add-littlecloud-form").validator('destroy');
                 $("#add-littlecloud-form").validator();
             });
@@ -406,7 +445,7 @@
                     },
                     url: "api/littlecloud",
                     type: "post",
-                    dataType: "json" // 接受服务端返回的类型
+                    dataType: "json"
                 });
 
                 return false;
@@ -438,7 +477,7 @@
                     },
                     url: url,
                     type: "put",
-                    dataType: "json" // 接受服务端返回的类型
+                    dataType: "json"
                 });
 
                 return false;
@@ -452,14 +491,14 @@
                     type: 'DELETE',
                     dataType: 'json',
                     success: function (data, textStatus, jqXHR) {
-                        table.ajax.reload();
-                    },
-                    error: function (xhr, textStatus) {
-                        $("#delete-error-modal").modal({closeViaDimmer: 0});
+                        if (data["result"]) {
+                            table.ajax.reload();
+                        } else {
+                            $("#delete-error-modal").modal({closeViaDimmer: 0});
+                        }
                     },
                 })
             }
         }());
     </script>
-
 {% endblock custom_script %}
