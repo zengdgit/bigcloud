@@ -82,7 +82,24 @@ def delete_littlecloud_by_id(id):
 @connect.route('/api/littlecloud/<int:id>', methods=['PUT'])
 @login_required
 def update_littlecloud_by_id(id):
-    return render_template('connect/connect.html')
+    form = LittleCloudForm()
+    if form.validate_on_submit():
+        cloud = LittleCloud.query.get(int(id))
+        if cloud:
+            cloud.name = form.name.data
+            cloud.url = form.url.data
+            cloud.phone = form.phone.data
+            cloud.email = form.email.data
+            cloud.ip = form.ip.data
+            cloud.port = form.port.data
+            cloud.protocol = form.protocol.data
+            cloud.save()
+            return jsonify({"result": True, "data": None, "message": u"Edit new littlecloud successfully!"})
+        res_message = u"Failed! The littlecloud with id %s is not excisted!" % id
+        return jsonify({"result": False, "data": None, "message": res_message})
+
+    error = form.errors
+    return jsonify({"result": False, "data": None, "message": error})
 
 
 @connect.route('/api/littlecloud/<int:id>', methods=['GET'])
