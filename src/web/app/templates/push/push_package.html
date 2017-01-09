@@ -7,7 +7,8 @@
                 <div class="page-header-heading"><span class="am-icon-mixcloud page-header-heading-icon"></span> 云推送
                     <small>上传应用安装包</small>
                 </div>
-                <p class="page-header-description">上传应用安装包。</p>
+                <p class="page-header-description">上传完毕后，还需要<a href="{{ url_for('push.application') }}">注册应用信息</a>，才能推送到小云。
+                </p>
             </div>
         </div>
     </div>
@@ -17,17 +18,49 @@
     <div class="row-content am-cf">
         <div class="widget am-cf">
             <div class="widget-head am-cf">
-                <div class="widget-title am-fl">应用安装包</div>
+                <div class="widget-title am-fl">安装包列表</div>
                 <div class="widget-function am-fr">
-                    <a href="javascript:;" class="am-icon-cog"></a>
+                    <button type="button" id="add-package-btn" class="am-btn am-btn-success am-btn-xs am-radius">
+                        <i class="am-icon-plus"></i>添加安装包
+                    </button>
                 </div>
             </div>
             <div class="widget-body am-fr">
-                <div style="height: 400px" class="" id="tpl-echarts-A">
-                    插个表
+                <div style="min-height: 400px;width: 98%;margin: auto" class="">
+                    <table width="100%" id="package-table"
+                           class="am-table am-table-compact am-table-striped tpl-table-black am-text-nowrap">
+                        <thead>
+                        <tr>
+                            {#                            <th class="is_connectible nosort">接入权限</th>#}
+                            {#                            <th class="name">小云名称</th>#}
+                            {#                            <th class="url nosort">小云主页</th>#}
+                            {#                            <th class="ip nosort">接入IP</th>#}
+                            {#                            <th class="port nosort">接入端口</th>#}
+                            {#                            <th class="protocol nosort">接入协议</th>#}
+                            {#                            <th class="email nosort">联系邮箱</th>#}
+                            {#                            <th class="phone nosort">联系电话</th>#}
+                            {#                            <th class="operation nosort">操作</th>#}
+                            <th class="">安装包</th>
+                            <th>大小</th>
+                            {#                            <th>关联信息</th>#}
+                            {#                            <th>开始时间</th>#}
+                            <th>MD5</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 
 {% endblock content_body %}
+
+
+{% block custom_script %}
+    <script src="{{ url_for('static', filename='js/resumable.js') }}"></script>
+
+    <script>
+    </script>
+{% endblock custom_script %}

@@ -81,3 +81,33 @@ class LittleCloud(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
+
+#################
+# push
+#################
+class Package(db.Model):
+    __tablename__ = 'packages'
+
+    id = db.Column('主键', db.Integer, primary_key=True)
+    filename = db.Column('文件名', db.Unicode(255))
+    relative_path = db.Column('RelativePath', db.String(255))
+    identifier = db.Column('Identifier', db.String(255), unique=True)
+    total_size = db.Column('文件总大小', db.Integer)
+    total_chunks = db.Column('Chunk数目', db.Integer)
+    is_complete = db.Column('是否完整', db.Boolean, default=False)
+    md5 = db.Column('MD5', db.String(255), default='MD5')
+    created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
+    modified_time = db.Column('修改时间', db.DateTime, onupdate=datetime.datetime.now)
+
+
+    def __repr__(self):
+        return '<Package %r>' % self.name
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
