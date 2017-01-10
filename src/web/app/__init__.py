@@ -8,6 +8,7 @@ from config import config
 from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+from flask_uploads import UploadSet, configure_uploads, ALL, patch_request_class
 
 # TODO 为啥要分割？
 if __name__.find('.') > 0:
@@ -37,10 +38,16 @@ login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 login_manager.login_message = ''
 
+patch_request_class(app, 1024 * 1024 * 1024)
+upload = UploadSet('upload', ALL)
+
 
 def create_app(config_name):
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
+
+    app.config['UPLOADED_UPLOAD_DEST'] = os.path.abspath('upload_files')
+    configure_uploads(app, upload)
 
     login_manager.init_app(app)
 

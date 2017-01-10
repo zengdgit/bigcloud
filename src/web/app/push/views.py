@@ -3,11 +3,14 @@
 #
 # 2016/12/22 Chen Weijian : Init
 
-
+import os
 from flask import Flask, request, jsonify, render_template, url_for, redirect
 from . import push
 from ..models import Package
+from ..utils import checksum
 from flask_login import login_required
+from .forms import UploadForm
+from .. import upload
 
 
 @push.route('/')
@@ -54,7 +57,7 @@ def classification_of_application():
 def get_all_packages():
     '''
     【API】得到所有安装包的数据。
-    :return: 安装包 ID
+    :return:
     '''
     packages = Package.query.all()
     dic = []
@@ -62,11 +65,7 @@ def get_all_packages():
         item = {
             "id": i.id,
             "filename": i.filename,
-            "relative_path": i.relative_path,
-            "identifier": i.identifier,
-            "total_size": i.total_size,
-            "total_chunks": i.total_chunks,
-            "is_complete": i.is_complete,
+            "size": i.size,
             "md5": i.md5,
         }
         dic.append(item)
@@ -78,9 +77,26 @@ def get_all_packages():
 @login_required
 def upload_package():
     '''
-    【API】处理上传文件chunk。
+    【API】处理上传文件。
     '''
-    res = {"result": True, "data": None, "message": u"upload package successfully!"}
+    form = UploadForm()
+    if form.validate_on_submit():
+        filename = upload.save(form.upload_file.data)
+        path = upload.path(filename)
+        size = os.stat(path).st_size
+        md5 = checksum(path)
+
+        new_package = Package(
+            filename=filename,
+            size=size,
+            md5=md5,
+        )
+        new_package.save()
+
+        return jsonify({"result": True, "data": None, "message": "upload the package file successfully!"})
+    err = form.errors
+    res = {"result": True, "data": None, "message": err}
+    return jsonify(res)
 
 
 @push.route('/api/package/<int:id>', methods=['DELETE'])
