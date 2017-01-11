@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 
+<!--
+TODO
+- !!!对于文件上传的格式要有所限制。！！！（由于暂未确定所以现未加限制）
+- Jquery 的 FileUpload 是支持暂停、终止的，可以考虑加上。
+- 删除时弹出的 Modal，提醒信息可以详细一点。
+- 对于操作不成功弹出的 Alert 窗口，失败信息可以详细一点。
+-->
+
 {% block content_head %}
     <div class="container-fluid am-cf">
         <div class="row">
@@ -46,7 +54,6 @@
             </div>
         </div>
     </div>
-
 {% endblock content_body %}
 
 {% block custom_modal %}
@@ -76,7 +83,6 @@
             </div>
         </div>
     </div>
-
 
     <!--显示文件上传状态的Modal-->
     <div class="am-modal am-modal-no-btn" tabindex="-1" id="upload-file-modal">
@@ -120,6 +126,10 @@
                     {"data": "operation"},
                 ],
                 "createdRow": function (row, data, index) {
+                    var fileNameTemplate = "<a href='{0}'>{1}</a>".format(data["url"], data["filename"]);
+                    $('td', row).eq(0).html(fileNameTemplate);
+
+                    $('td', row).eq(1).html(readablizeBytes(data["size"]));
                 },
                 "columnDefs": [{
                     "targets": "size",
@@ -187,6 +197,13 @@
                     }
                 });
             });
+
+            // Bytes 智能转换为 KB， MB，GB 的函数。
+            function readablizeBytes(bytes) {
+                var s = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+                var e = Math.floor(Math.log(bytes) / Math.log(1024));
+                return (bytes / Math.pow(1024, Math.floor(e))).toFixed(2) + " " + s[e];
+            }
         });
     </script>
 {% endblock custom_script %}

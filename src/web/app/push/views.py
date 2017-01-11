@@ -65,6 +65,7 @@ def get_all_packages():
         item = {
             "id": i.id,
             "filename": i.filename,
+            "url": upload.url(i.filename),
             "size": i.size,
             "md5": i.md5,
         }
@@ -77,11 +78,12 @@ def get_all_packages():
 @login_required
 def upload_package():
     '''
-    【API】处理上传文件。
+    【API】处理上传文件，文件保存到本地并添加信息到数据库。
+    :return:
     '''
     form = UploadForm()
     if form.validate_on_submit():
-        filename = upload.save(form.upload_file.data)
+        filename = upload.save(form.upload_file.data, name=form.upload_file.data.filename)
         path = upload.path(filename)
         size = os.stat(path).st_size
         md5 = checksum(path)
@@ -109,6 +111,8 @@ def delete_package_by_id(id):
     '''
     package = Package.query.get(int(id))
     if package:
+        path = upload.path(package.filename)
+        os.remove(path)
         package.delete()
         return jsonify({"result": True, "data": None, "message": "Delete the package successfully!"})
     res_message = u"Failed! The package with id %s is not excisted!" % id

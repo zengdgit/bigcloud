@@ -65,7 +65,7 @@ class LittleCloud(db.Model):
     is_connected = db.Column('是否已经接入', db.Boolean, default=False)
     phone = db.Column('联系电话', db.String(30), nullable=True)
     email = db.Column('联系邮箱', EmailType, nullable=True)
-    ip = db.Column('接入IP', IPAddressType, nullable=True)  # TODO 为啥ip和port都可以为null，真奇怪
+    ip = db.Column('接入IP', IPAddressType, nullable=True)
     port = db.Column('接入端口', db.Integer, nullable=True)
     protocol = db.Column('接入协议', db.String(20), default=ProtocolType.HTTP)
     created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
@@ -90,8 +90,8 @@ class Package(db.Model):
     __tablename__ = 'packages'
 
     id = db.Column('主键', db.Integer, primary_key=True)
-    filename = db.Column('文件名', db.Unicode(255))
-    size = db.Column('文件总大小', db.Integer)
+    filename = db.Column('文件名', db.Unicode(255), unique=True)
+    size = db.Column('文件总大小', db.Integer,  default=0)
     md5 = db.Column('MD5', db.String(255), default='MD5')
     created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
     modified_time = db.Column('修改时间', db.DateTime, onupdate=datetime.datetime.now)
