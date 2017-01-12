@@ -107,7 +107,7 @@ TODO
     <script src="{{ url_for('static', filename='js/jquery.fileupload.js') }}"></script>
 
     <script>
-        $(function () {
+        (function () {
             // 初始化「小云白名单」表格。
             var table = $('#package-table').DataTable({
                 responsive: true,
@@ -159,6 +159,8 @@ TODO
                 },
             });
 
+            console.log(2);
+
             // 根据ID删除安装包的函数：用Ajax来发送DELETE请求。
             function deletePackageById(id) {
                 var url = "api/package/" + id.toString();
@@ -204,6 +206,6 @@ TODO
                 var e = Math.floor(Math.log(bytes) / Math.log(1024));
                 return (bytes / Math.pow(1024, Math.floor(e))).toFixed(2) + " " + s[e];
             }
-        });
+        }());
     </script>
 {% endblock custom_script %}
