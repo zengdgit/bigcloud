@@ -43,10 +43,10 @@ def package():
     return render_template('push/push_package.html')
 
 
-@push.route('/classification_of_application')
+@push.route('/function')
 @login_required
-def classification_of_application():
-    return render_template('push/classification_of_application.html')
+def function():
+    return render_template('push/push_function.html')
 
 
 #################

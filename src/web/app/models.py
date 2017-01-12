@@ -17,7 +17,7 @@ from sqlalchemy_utils import EmailType, IPAddressType
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
-    id = db.Column('主键', db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column('用户名', db.String(50), unique=True)
     email = db.Column('邮箱', db.String(120))
     password_hash = db.Column('哈希加密密码', db.String(128))
@@ -58,7 +58,7 @@ class ProtocolType(object):
 class LittleCloud(db.Model):
     __tablename__ = 'littleclouds'
 
-    id = db.Column('主键', db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column('小云平台名称', db.Unicode(255), unique=True)
     url = db.Column('小云平台URL', db.String(255), unique=True)
     is_connectible = db.Column('是否允许接入', db.Boolean, default=False)
@@ -89,16 +89,80 @@ class LittleCloud(db.Model):
 class Package(db.Model):
     __tablename__ = 'packages'
 
-    id = db.Column('主键', db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     filename = db.Column('文件名', db.Unicode(255), unique=True)
-    size = db.Column('文件总大小', db.Integer,  default=0)
+    size = db.Column('文件总大小', db.Integer, default=0)
     md5 = db.Column('MD5', db.String(255), default='MD5')
     created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
     modified_time = db.Column('修改时间', db.DateTime, onupdate=datetime.datetime.now)
 
-
     def __repr__(self):
         return '<Package %r>' % self.name
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
+class FirstClassification(db.Model):
+    __tablename__ = 'firstClassifications'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column('一级分类名', db.Unicode(255), unique=True)
+    created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
+    modified_time = db.Column('修改时间', db.DateTime, onupdate=datetime.datetime.now)
+    secondary_classifications = db.relationship('SecondaryClassification', backref='firstClassifications',
+                                                lazy='dynamic')
+
+    def __repr__(self):
+        return '<FirstClassification %r>' % self.name
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
+class SecondaryClassification(db.Model):
+    __tablename__ = 'secondaryClassifications'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column('二级分类名', db.Unicode(255), unique=True)
+    first_classification = db.Column(db.Integer, db.ForeignKey('firstClassifications.id'))
+    created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
+    modified_time = db.Column('修改时间', db.DateTime, onupdate=datetime.datetime.now)
+    functions = db.relationship('Function', backref='secondaryClassifications', lazy='dynamic')
+
+    def __repr__(self):
+        return '<SecondaryClassification %r>' % self.name
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
+class Function(db.Model):
+    __tablename__ = 'functions'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column('功能名', db.Unicode(255), unique=True)
+    secondary_classification = db.Column(db.Integer, db.ForeignKey('secondaryClassifications.id'))
+    created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
+    modified_time = db.Column('修改时间', db.DateTime, onupdate=datetime.datetime.now)
+
+    def __repr__(self):
+        return '<Function %r>' % self.name
 
     def save(self):
         db.session.add(self)
