@@ -8,9 +8,9 @@ from flask import Flask, request, jsonify, render_template, url_for, redirect
 from . import push
 from ..models import Package
 from ..utils import checksum
-from flask_login import login_required
+from flask_login import login_required, current_user
 from .forms import UploadForm
-from .. import upload
+from .. import upload, logger
 
 
 @push.route('/')
@@ -70,6 +70,7 @@ def get_all_packages():
             "md5": i.md5,
         }
         dic.append(item)
+    logger.info("{0} - Get all packages".format(current_user.name))
     res = {"result": True, "data": dic, "message": u"Get all packages successfully!"}
     return jsonify(res)
 
@@ -94,9 +95,10 @@ def upload_package():
             md5=md5,
         )
         new_package.save()
-
-        return jsonify({"result": True, "data": None, "message": "upload the package file successfully!"})
+        logger.info("{0} - Upload {1} package with id {2}".format(current_user.name, filename, new_package.id))
+        return jsonify({"result": True, "data": None, "message": "upload the package file successfully"})
     err = form.errors
+    logger.error("{0} - Fail to upload package because {1}".format(current_user.name, err))
     res = {"result": True, "data": None, "message": err}
     return jsonify(res)
 
@@ -111,9 +113,12 @@ def delete_package_by_id(id):
     '''
     package = Package.query.get(int(id))
     if package:
-        path = upload.path(package.filename)
+        filename = package.filename
+        path = upload.path(filename)
         os.remove(path)
         package.delete()
-        return jsonify({"result": True, "data": None, "message": "Delete the package successfully!"})
-    res_message = u"Failed! The package with id %s is not excisted!" % id
+        logger.info("{0} - Delete {1} package with id {2}".format(current_user.name, filename, id))
+        return jsonify({"result": True, "data": None, "message": "Delete the package successfully"})
+    res_message = u"Failed! The package with id %s is not excisted" % id
+    logger.error("{0} - {1}".format(current_user.name, res_message))
     return jsonify({"result": False, "data": None, "message": res_message})

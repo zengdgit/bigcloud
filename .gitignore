@@ -4,3 +4,4 @@
 __pycache__
 .idea
 upload_files
+flask.log

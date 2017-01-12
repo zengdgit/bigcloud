@@ -4,13 +4,13 @@
 # 2016/12/22 Chen Weijian : Init
 
 import os
+import logging
 from config import config
 from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_uploads import UploadSet, configure_uploads, ALL, patch_request_class
 
-# TODO 为啥要分割？
 if __name__.find('.') > 0:
     flask_name = __name__.split('.')[0]
 else:
@@ -41,6 +41,8 @@ login_manager.login_message = ''
 patch_request_class(app, 1024 * 1024 * 1024)
 upload = UploadSet('upload', ALL)
 
+logger = app.logger
+
 
 def create_app(config_name):
     app.config.from_object(config[config_name])
@@ -52,6 +54,13 @@ def create_app(config_name):
     login_manager.init_app(app)
 
     db.init_app(app)
+
+    handler = logging.FileHandler('flask.log', encoding='UTF-8')
+    handler.setLevel(logging.DEBUG)
+    logging_format = logging.Formatter(
+        '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
+    handler.setFormatter(logging_format)
+    app.logger.addHandler(handler)
 
     # register blueprints
     from .auth import auth as auth_blueprint

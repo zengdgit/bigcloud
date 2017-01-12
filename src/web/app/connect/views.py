@@ -6,8 +6,9 @@
 from flask import jsonify, render_template
 from . import connect
 from ..models import LittleCloud
-from flask_login import login_required
+from flask_login import login_required, current_user
 from .forms import LittleCloudForm
+from .. import logger
 
 
 @connect.route('/', methods=['GET', 'POST'])
@@ -25,7 +26,7 @@ def index():
 def get_all_littleclouds():
     '''
     【API】得到所有小云的数据。
-    :return: 小云 ID
+    :return:
     '''
     littleclouds = LittleCloud.query.all()
     dic = []
@@ -43,7 +44,8 @@ def get_all_littleclouds():
             "protocol": i.protocol,
         }
         dic.append(item)
-    res = {"result": True, "data": dic, "message": u"Get all littleclouds successfully!"}
+    logger.info("{0} - Get all littleclouds".format(current_user.name))
+    res = {"result": True, "data": dic, "message": u"Get all littleclouds successfully"}
     return jsonify(res)
 
 
@@ -52,7 +54,7 @@ def get_all_littleclouds():
 def add_littlecloud():
     '''
     【API】添加小云。
-    :return: 小云 ID
+    :return:
     '''
     form = LittleCloudForm()
     if form.validate_on_submit():
@@ -61,7 +63,9 @@ def add_littlecloud():
 
         # 防止添加同名称和同URL的小云
         if cloud1 or cloud2:
-            res_massage = u"Failed! The littlecloud with same name or url have already excisted"
+            res_massage = u"Failed! The littlecloud with same name '{0}' or url '{0}' have already excisted".format(
+                form.name.data, form.url.data)
+            logger.error("{0} - {1}".format(current_user.name, res_massage))
             return jsonify({"result": False, "data": None, "message": res_massage})
 
         new_cloud = LittleCloud(
@@ -74,8 +78,10 @@ def add_littlecloud():
             protocol=form.protocol.data,
         )
         new_cloud.save()
-        return jsonify({"result": True, "data": None, "message": u"Add new littlecloud successfully!"})
+        logger.info("{0} - Add {1} littlecloud with id {2}".format(current_user.name, form.name.data, new_cloud.id))
+        return jsonify({"result": True, "data": None, "message": u"Add new littlecloud successfully"})
     error = form.errors
+    logger.error("{0} - Fail to add littlecloud because {1}".format(current_user.name, error))
     return jsonify({"result": False, "data": None, "message": error})
 
 
@@ -89,9 +95,12 @@ def delete_littlecloud_by_id(id):
     '''
     cloud = LittleCloud.query.get(int(id))
     if cloud:
+        name = cloud.name
         cloud.delete()
-        return jsonify({"result": True, "data": None, "message": "Delete the littlecloud successfully!"})
-    res_message = u"Failed! The littlecloud with id %s is not excisted!" % id
+        logger.info("{0} - Delete {1} littlecloud with id {2}".format(current_user.name, name, id))
+        return jsonify({"result": True, "data": None, "message": "Delete the littlecloud successfully"})
+    res_message = u"Failed! The littlecloud with id %s is not excisted" % id
+    logger.error("{0} - {1}".format(current_user.name, res_message))
     return jsonify({"result": False, "data": None, "message": res_message})
 
 
@@ -115,11 +124,14 @@ def update_littlecloud_by_id(id):
             cloud.port = form.port.data
             cloud.protocol = form.protocol.data
             cloud.save()
-            return jsonify({"result": True, "data": None, "message": u"Edit new littlecloud successfully!"})
-        res_message = u"Failed! The littlecloud with id %s is not excisted!" % id
+            logger.info("{0} - Update {1} littlecloud with id {2}".format(current_user.name, cloud.name, cloud.id))
+            return jsonify({"result": True, "data": None, "message": u"Edit new littlecloud successfully"})
+        res_message = u"Failed! The littlecloud with id %s is not excisted" % id
+        logger.error("{0} - {1}".format(current_user.name, res_message))
         return jsonify({"result": False, "data": None, "message": res_message})
 
     error = form.errors
+    logger.error("{0} - Fail to update littlecloud because {1}".format(current_user.name, error))
     return jsonify({"result": False, "data": None, "message": error})
 
 
@@ -145,8 +157,10 @@ def get_littlecloud_by_id(id):
             "port": cloud.port,
             "protocol": cloud.protocol,
         }
-        return jsonify({"result": True, "data": data, "message": u"Get the littlecloud successfully!"})
+        logger.info("{0} - Get {1} littlecloud with id {2}".format(current_user.name, cloud.name, cloud.id))
+        return jsonify({"result": True, "data": data, "message": u"Get the littlecloud successfully"})
     res_message = u"Failed! The littlecloud with id %s is not excisted!" % id
+    logger.error("{0} - {1}".format(current_user.name, res_message))
     return jsonify({"result": False, "data": None, "message": res_message})
 
 
@@ -162,6 +176,11 @@ def toggle_access_permission_by_id(id):
     if cloud:
         cloud.is_connectible = not cloud.is_connectible
         cloud.save()
+        logger.info(
+            "{0} - Toggle the access permission of {1} littlecloud with id {2} and the value is {3}".format(
+                current_user.name, cloud.name,
+                cloud.id, cloud.is_connectible))
         return jsonify({"result": True, "data": None, "message": u"Toggle the access permission successfully!"})
     res_message = u"Failed! The littlecloud with id %s is not excisted!" % id
+    logger.error("{0} - {1}".format(current_user.name, res_message))
     return jsonify({"result": False, "data": None, "message": res_message})
