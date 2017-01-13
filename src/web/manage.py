@@ -29,6 +29,13 @@ def index():
 
 
 @manager.command
+def deploy():
+    """Run deployment tasks."""
+    from app.models import init_db
+    init_db()
+
+
+@manager.command
 def runserver():
     app.debug = True
     app.run(host='0.0.0.0', port=5354)
