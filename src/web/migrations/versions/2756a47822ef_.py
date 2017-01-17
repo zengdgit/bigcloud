@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 5fca6a62ef03
+Revision ID: 2756a47822ef
 Revises: 
-Create Date: 2017-01-16 11:39:41.463432
+Create Date: 2017-01-17 15:46:27.685350
 
 """
 from alembic import op
@@ -11,7 +11,7 @@ import sqlalchemy_utils
 
 
 # revision identifiers, used by Alembic.
-revision = '5fca6a62ef03'
+revision = '2756a47822ef'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -108,19 +108,19 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('应用名', sa.Unicode(length=255), nullable=True),
     sa.Column('版本号', sa.String(length=255), nullable=True),
-    sa.Column('function', sa.Integer(), nullable=True),
-    sa.Column('language', sa.Integer(), nullable=True),
-    sa.Column('cpu', sa.Integer(), nullable=True),
-    sa.Column('os', sa.Integer(), nullable=True),
-    sa.Column('package', sa.Integer(), nullable=True),
+    sa.Column('function_id', sa.Integer(), nullable=True),
+    sa.Column('language_id', sa.Integer(), nullable=True),
+    sa.Column('cpu_id', sa.Integer(), nullable=True),
+    sa.Column('os_id', sa.Integer(), nullable=True),
+    sa.Column('package_id', sa.Integer(), nullable=True),
     sa.Column('安装命令', sa.String(length=255), nullable=True),
     sa.Column('创建时间', sa.DateTime(), nullable=True),
     sa.Column('修改时间', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['cpu'], ['cpu.id'], ),
-    sa.ForeignKeyConstraint(['function'], ['functions.id'], ),
-    sa.ForeignKeyConstraint(['language'], ['languages.id'], ),
-    sa.ForeignKeyConstraint(['os'], ['os.id'], ),
-    sa.ForeignKeyConstraint(['package'], ['packages.id'], ),
+    sa.ForeignKeyConstraint(['cpu_id'], ['cpu.id'], ),
+    sa.ForeignKeyConstraint(['function_id'], ['functions.id'], ),
+    sa.ForeignKeyConstraint(['language_id'], ['languages.id'], ),
+    sa.ForeignKeyConstraint(['os_id'], ['os.id'], ),
+    sa.ForeignKeyConstraint(['package_id'], ['packages.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('应用名')
     )

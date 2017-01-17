@@ -269,14 +269,20 @@ class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column('应用名', db.Unicode(255), unique=True)
     version = db.Column('版本号', db.String(255), default='1.0')
-    function = db.Column(db.Integer, db.ForeignKey('functions.id'), nullable=True)
-    language = db.Column(db.Integer, db.ForeignKey('languages.id'), nullable=True)
-    cpu = db.Column(db.Integer, db.ForeignKey('cpu.id'), nullable=True)
-    os = db.Column(db.Integer, db.ForeignKey('os.id'), nullable=True)
-    package = db.Column(db.Integer, db.ForeignKey('packages.id'), nullable=True)
+    function_id = db.Column(db.Integer, db.ForeignKey('functions.id'), nullable=True)
+    language_id = db.Column(db.Integer, db.ForeignKey('languages.id'), nullable=True)
+    cpu_id = db.Column(db.Integer, db.ForeignKey('cpu.id'), nullable=True)
+    os_id = db.Column(db.Integer, db.ForeignKey('os.id'), nullable=True)
+    package_id = db.Column(db.Integer, db.ForeignKey('packages.id'), nullable=True)
     install_command = db.Column('安装命令', db.String(255), nullable=True)
     created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
     modified_time = db.Column('修改时间', db.DateTime, onupdate=datetime.datetime.now)
+
+    function = db.relationship('Function', backref=db.backref('Application'))
+    language = db.relationship('Language', backref=db.backref('Application'))
+    cpu = db.relationship('CPU', backref=db.backref('Application'))
+    os = db.relationship('OS', backref=db.backref('Application'))
+    package = db.relationship('Package', backref=db.backref('Application'))
 
     def __repr__(self):
         return '<Application %r>' % self.name
@@ -448,8 +454,9 @@ def init_db():
 
     # 初始化Language
     if len(Language.query.all()) == 0:
-        Language(id=1, name=u"Chinese").save()
-        Language(id=2, name=u"English").save()
+        Language(id=1, name=u"中文简体").save()
+        Language(id=2, name=u"中文繁体").save()
+        Language(id=3, name=u"美式英文").save()
 
     # 初始化CPU
     if len(CPU.query.all()) == 0:

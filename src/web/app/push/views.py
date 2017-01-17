@@ -6,7 +6,7 @@
 import os
 from flask import Flask, request, jsonify, render_template, url_for, redirect
 from . import push
-from ..models import Package
+from ..models import Package, Application
 from ..utils import checksum
 from flask_login import login_required, current_user
 from .forms import UploadForm
@@ -120,5 +120,54 @@ def delete_package_by_id(id):
         logger.info("{0} - Delete {1} package with id {2}".format(current_user.name, filename, id))
         return jsonify({"result": True, "data": None, "message": "Delete the package successfully"})
     res_message = u"Failed! The package with id %s is not excisted" % id
+    logger.error("{0} - {1}".format(current_user.name, res_message))
+    return jsonify({"result": False, "data": None, "message": res_message})
+
+
+#################
+# application
+#################
+@push.route('/api/application', methods=['GET'])
+@login_required
+def get_all_applications():
+    '''
+    【API】得到所有应用的数据。
+    :return:
+    '''
+    applications = Application.query.all()
+    dic = []
+    for i in applications:
+        item = {
+            "id": i.id,
+            "name": i.name,
+            "version": i.version,
+            "function": i.function.name if i.function else "",
+            "os": i.os.name if i.os else "",
+            "cpu": i.cpu.name if i.cpu else "",
+            "language": i.language.name if i.language else "",
+            "install_command": i.install_command,
+            "package": i.package.name if i.package else "",
+        }
+        dic.append(item)
+    logger.info("{0} - Get all applications".format(current_user.name))
+    res = {"result": True, "data": dic, "message": u"Get all applications successfully!"}
+    return jsonify(res)
+
+
+@push.route('/api/application/<int:id>', methods=['DELETE'])
+@login_required
+def delete_Application_by_id(id):
+    '''
+    【API】根据 id 删除应用。
+    :param id: 应用 ID
+    :return:
+    '''
+    application = Application.query.get(int(id))
+    if application:
+        name = application.name
+        application.delete()
+        logger.info("{0} - Delete {1} application with id {2}".format(current_user.name, name, id))
+        return jsonify({"result": True, "data": None, "message": "Delete the application successfully"})
+    res_message = u"Failed! The application with id %s is not excisted" % id
     logger.error("{0} - {1}".format(current_user.name, res_message))
     return jsonify({"result": False, "data": None, "message": res_message})

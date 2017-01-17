@@ -7,7 +7,7 @@
                 <div class="page-header-heading"><span class="am-icon-mixcloud page-header-heading-icon"></span> 云推送
                     <small>注册应用信息</small>
                 </div>
-                <p class="page-header-description">描述应用安装包，打包成一个应用。</p>
+                <p class="page-header-description">描述应用安装包，打包成为一个应用。</p>
             </div>
         </div>
     </div>
@@ -15,19 +15,453 @@
 
 {% block content_body %}
     <div class="row-content am-cf">
-        <div class="widget am-cf">
-            <div class="widget-head am-cf">
-                <div class="widget-title am-fl">应用</div>
-                <div class="widget-function am-fr">
-                    <a href="javascript:;" class="am-icon-cog"></a>
-                </div>
+    <div class="widget am-cf">
+        <div class="widget-head am-cf">
+            <div class="widget-title am-fl">应用名单</div>
+            <div class="widget-function am-fr">
+                <button type="button" id="add-application-btn" class="am-btn am-btn-success am-btn-xs am-radius">
+                    <i class="am-icon-plus"></i>添加应用
+                </button>
             </div>
-            <div class="widget-body am-fr">
-                <div style="height: 400px" class="" id="tpl-echarts-A">
-                    插个表
-                </div>
+        </div>
+        <div class="widget-body am-fr">
+            <div style="min-height: 400px;width: 98%;margin: auto">
+                <table width="100%" id="application-table"
+                       class="am-table am-table-compact am-table-striped tpl-table-black am-text-nowrap">
+                    <thead>
+                    <tr>
+                        <th class="name">应用名称</th>
+                        <th class="function">所属分类</th>
+                        <th class="language">语言</th>
+                        <th class="os">操作系统</th>
+                        <th class="cpu">CPU</th>
+                        <th class="package">安装文件</th>
+                        <th class="install_command nosort">安装命令</th>
+                        <th class="version nosort">版本</th>
+                        <th class="operation nosort">操作</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock content_body %}
+
+{% block custom_modal %}
+    <!--添加应用的Modal-->
+    <div class="am-modal am-modal-no-btn" tabindex="-1" id="add-application-modal">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">
+                <h1>添加应用</h1>
+                <a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+            </div>
+            <div class="am-modal-bd">
+                <form id="add-application-form" class="am-form am-form-horizontal" data-am-validator
+                      method="post" action="api/littlecloud">
+                    <div class="am-form-group">
+                        <label for="add-form-name" class="am-u-sm-2 am-form-label">应用名称</label>
+                        <div class="am-u-sm-10">
+                            <input type="text" id="add-form-name" name="name" minlength="1" maxlength="50"
+                                   pattern="^\w+$"
+                                   placeholder="例：百度全家桶" required>
+                        </div>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="add-form-function" class="am-u-sm-2 am-form-label">功能分类</label>
+                        <div class="am-u-sm-10">
+                            <select id="add-form-first-classification" required name="first_classification"
+                                    style="margin-bottom: 5px;">
+                                <option value="">请选择一级分类</option>
+                                <option value="1">23</option>
+                            </select>
+                            <select id="add-form-secondary-classification" required name="secondary_classification"
+                                    style="margin-bottom: 5px;">
+                                <option value="">请选择二级分类</option>
+                            </select>
+                            <select id="add-form-function" required name="function">
+                                <option value="">请选择三级分类</option>
+                            </select>
+                        </div>
+                        <span class="am-form-caret"></span>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="doc-select-1" class="am-u-sm-2 am-form-label">语言</label>
+                        <div class="am-u-sm-10">
+                            <select id="add-form-language" required name="language">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                        <span class="am-form-caret"></span>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="doc-select-1" class="am-u-sm-2 am-form-label">操作系统</label>
+                        <div class="am-u-sm-10">
+                            <select id="add-form-os" required name="os">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                        <span class="am-form-caret"></span>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="doc-select-1" class="am-u-sm-2 am-form-label">CPU</label>
+                        <div class="am-u-sm-10">
+                            <select id="add-form-cpu" required name="cpu">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                        <span class="am-form-caret"></span>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="doc-select-1" class="am-u-sm-2 am-form-label">安装文件</label>
+                        <div class="am-u-sm-10">
+                            <select id="add-form-package" required name="package">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                        <span class="am-form-caret"></span>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="add-form-url" class="am-u-sm-2 am-form-label">安装命令</label>
+                        <div class="am-u-sm-10">
+                            <input type="text" id="add-form-install-command" name="install_command" minlength="1"
+                                   maxlength="2083"
+                                   placeholder="例：pip install" required>
+                        </div>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="add-form-url" class="am-u-sm-2 am-form-label">版本号</label>
+                        <div class="am-u-sm-10">
+                            <input type="text" id="add-form-version" name="version" minlength="1" maxlength="50"
+                                   placeholder="例：1.0" required>
+                        </div>
+                    </div>
+
+
+                    <div class="am-form-group">
+                        <div>
+                            <button id="add-form-submit-button" type="" class="am-btn am-btn-success">添加</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-{% endblock content_body %}
+    <!--编辑应用的Modal-->
+    <div class="am-modal am-modal-no-btn" tabindex="-1" id="edit-application-modal">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">
+                <h1>编辑应用</h1>
+                <a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+            </div>
+            <div class="am-modal-bd">
+                <form id="edit-application-form" class="am-form am-form-horizontal" data-am-validator
+                      method="" action="">
+                    <input type="number" id="edit-form-id" style="display: none;">
+                    <div class="am-form-group">
+                        <label for="edit-form-name" class="am-u-sm-2 am-form-label">小云名称</label>
+                        <div class="am-u-sm-10">
+                            <input type="text" id="edit-form-name" name="name" minlength="3" maxlength="20"
+                                   pattern="^\w+$"
+                                   placeholder="由数字、26个英文字母或者下划线组成的字符串" required>
+                        </div>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="edit-form-url" class="am-u-sm-2 am-form-label">小云主页</label>
+                        <div class="am-u-sm-10">
+                            <input type="text" id="edit-form-url" name="url" minlength="1" maxlength="2083"
+                                   placeholder="例：www.barry.com" required>
+                        </div>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="edit-form-ip" class="am-u-sm-2 am-form-label">接入IP</label>
+                        <div class="am-u-sm-10">
+                            <input type="text" id="edit-form-ip" name="ip"
+                                   pattern="^(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])$"
+                                   placeholder="例：10.231.45.38" required>
+                        </div>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="edit-form-port" class="am-u-sm-2 am-form-label">接入端口</label>
+                        <div class="am-u-sm-10">
+                            <input type="number" id="edit-form-port" min="0" max="65535" name="port"
+                                   placeholder="例：8000" required>
+                        </div>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="doc-select-1" class="am-u-sm-2 am-form-label">接入协议</label>
+                        <div class="am-u-sm-10">
+                            <select id="edit-form-protocol" required name="protocol">
+                                <option value="">请选择</option>
+                                <option value="HTTPS">HTTPS</option>
+                                <option value="HTTP">HTTP</option>
+                            </select>
+                        </div>
+                        <span class="am-form-caret"></span>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="edit-form-email" class="am-u-sm-2 am-form-label">联系邮箱</label>
+                        <div class="am-u-sm-10">
+                            <input type="email" id="edit-form-email" name="email"
+                                   placeholder="例：barry@gmail.com" required>
+                        </div>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="edit-form-phone" class="am-u-sm-2 am-form-label">联系电话</label>
+                        <div class="am-u-sm-10">
+                            <input type="number" id="edit-form-phone" name="phone"
+                                   placeholder="例：18819473294" required>
+                        </div>
+                    </div>
+
+                    <div class="am-form-group">
+                        <!--<div class="am-u-sm-10 am-u-sm-offset-2">-->
+                        <div>
+                            <button id="edit-form-submit-button" type="" class="am-btn am-btn-success">提交</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--添加应用错误的Modal-->
+    <div class="am-modal am-modal-alert" tabindex="-1" id="add-error-modal">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">错误</div>
+            <div class="am-modal-bd">
+                添加应用失败！
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn">确定</span>
+            </div>
+        </div>
+    </div>
+
+    <!--编辑应用错误的Modal-->
+    <div class="am-modal am-modal-alert" tabindex="-1" id="edit-error-modal">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">错误</div>
+            <div class="am-modal-bd">
+                编辑应用失败！
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn">确定</span>
+            </div>
+        </div>
+    </div>
+
+    <!--确认删除小云的Modal-->
+    <div class="am-modal am-modal-confirm" tabindex="-1" id="confirm-delete-modal">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">警告</div>
+            <div class="am-modal-bd">
+                <!--TODO 最好显示该应用的部分信息。-->
+                确定要删除这个应用吗？
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+            </div>
+        </div>
+    </div>
+
+    <!--删除应用错误的Modal-->
+    <div class="am-modal am-modal-alert" tabindex="-1" id="delete-error-modal">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">错误</div>
+            <div class="am-modal-bd">
+                删除应用失败！
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn">确定</span>
+            </div>
+        </div>
+    </div>
+{% endblock custom_modal %}
+
+{% block custom_script %}
+    <script>
+        (function () {
+            // 初始化「应用」表格。
+            var table = $('#application-table').DataTable({
+                responsive: true,
+                "lengthChange": false,
+                "order": [[0, 'asc']],
+                "ajax": "api/application",
+                "oLanguage": {
+                    "sLengthMenu": "每页显示 _MENU_ 条记录",
+                    "sZeroRecords": "没有检索到数据",
+                    "sSearch": "",
+                },
+                "columns": [
+                    {"data": "name"},
+                    {"data": "function"},
+                    {"data": "language"},
+                    {"data": "os"},
+                    {"data": "cpu"},
+                    {"data": "package"},
+                    {"data": "install_command"},
+                    {"data": "version"},
+                    {"data": "operation"},
+                ],
+                "createdRow": function (row, data, index) {
+                },
+                "columnDefs": [{
+                    "targets": "nosort",
+                    "orderable": false,
+                }, {
+                    "targets": "operation",
+                    "data": null,
+                    "defaultContent": '<button class="am-btn am-btn-primary am-btn-xs am-radius edit-application-button" style="margin-right:10px"><i class="am-icon-edit"></i></button>' +
+                    '<button class="am-btn am-btn-danger am-btn-xs am-radius delete-application-button"><i class="am-icon-trash"></i></button>',
+                }],
+                "drawCallback": function () {
+                    // 往「删除按钮」注册点击事件：渲染出删除Modal。
+                    $(".delete-application-button").on('click', function () {
+                        $('#confirm-delete-modal').modal({
+                            relatedTarget: this,
+                            onConfirm: function (options) {
+                                var $link = $(this.relatedTarget);
+                                var tr = $link.closest('tr');
+                                var row = table.row(tr);
+                                var rowData = row.data();
+                                deleteApplicationById(rowData.id);
+                            },
+                        });
+                    });
+
+                    // 往「编辑按钮」注册点击事件：渲染出编辑Modal。
+                    $(".edit-application-button").on('click', function () {
+                        var tr = this.closest('tr');
+                        var row = table.row(tr);
+                        var rowData = row.data();
+
+                        // 清空表单数据。
+                        $("#edit-application-form").get(0).reset();
+
+                        // 覆盖表单数据。
+                        $("#edit-form-id").val(rowData.id);
+                        $("#edit-form-name").val(rowData.name);
+                        $("#edit-form-url").val(rowData.url);
+                        $("#edit-form-ip").val(rowData.ip);
+                        $("#edit-form-port").val(rowData.port);
+                        $("#edit-form-protocol").val(rowData.protocol);
+                        $("#edit-form-email").val(rowData.email);
+                        $("#edit-form-phone").val(rowData.phone);
+
+                        // 渲染编辑modal。
+                        $('#edit-application-modal').modal();
+
+                        // 激活表单验证样式（渲染出modal后激活才有效果）。
+                        var isFormValid = $('#edit-application-form').validator('isFormValid');
+                    });
+                },
+            });
+
+            // 「添加应用按钮」的点击事件：弹出「添加应用」Modal。
+            $('#add-application-btn').on('click', function () {
+                $('#add-application-modal').modal();
+            });
+
+            // 「添加应用Modal」窗口完全关闭的事件：清空「添加应用」表单数据和重置验证。
+            $('#add-application-modal').on('closed.modal.amui', function () {
+                // 清空表单数据。
+                $("#add-application-form").get(0).reset();
+
+                // 重置表单验证。
+                $("#add-application-form").validator('destroy');
+                $("#add-application-form").validator();
+            });
+
+            // 「添加应用表单」的提交方法：采用异步提交的方式。
+            $('#add-application-form').submit(function (e) {
+                $(this).ajaxSubmit({
+                    // 提交前的回调函数：用于判断表单验证是否通过。
+                    beforeSubmit: function (formData, jqForm, options) {
+                        var formValidity = $('#add-application-form').validator('isFormValid');
+                        if (formValidity) {
+                            $('#add-application-modal').modal('close');
+                            return true;
+                        }
+                        return false;
+                    },
+                    // 提交后的回调函数
+                    success: function (responseObject, statusText) {
+                        if (responseObject['result']) {
+                            table.ajax.reload();
+                        } else {
+                            $("#add-error-modal").modal({closeViaDimmer: 0});
+                        }
+                    },
+                    url: "api/application",
+                    type: "post",
+                    dataType: "json"
+                });
+
+                return false;
+            });
+
+            // 「编辑应用表单」的提交方法：采用异步提交的方式。
+            $('#edit-application-form').submit(function (e) {
+                var id = $("#edit-form-id").val();
+                var url = "api/application/" + id.toString();
+
+                $(this).ajaxSubmit({
+                    // 提交前的回调函数：用于判断表单验证是否通过。
+                    beforeSubmit: function (formData, jqForm, options) {
+                        var formValidity = $('#edit-application-form').validator('isFormValid');
+                        if (formValidity) {
+                            $('#edit-application-modal').modal('close');
+                            return true;
+                        }
+                        return false;
+                    },
+                    // 提交后的回调函数
+                    success: function (responseObject, statusText) {
+                        if (responseObject['result']) {
+                            table.ajax.reload();
+                        } else {
+                            $("#edit-error-modal").modal({closeViaDimmer: 0});
+                        }
+                    },
+                    url: url,
+                    type: "put",
+                    dataType: "json"
+                });
+
+                return false;
+            });
+
+            // 根据ID删除应用的函数：用Ajax来发送DELETE请求。
+            function deleteApplicationById(id) {
+                var url = "api/application/" + id.toString();
+                $.ajax({
+                    url: url,
+                    type: 'DELETE',
+                    dataType: 'json',
+                    success: function (data, textStatus, jqXHR) {
+                        if (data["result"]) {
+                            table.ajax.reload();
+                        } else {
+                            $("#delete-error-modal").modal({closeViaDimmer: 0});
+                        }
+                    },
+                })
+            }
+        }());
+    </script>
+{% endblock custom_script %}
