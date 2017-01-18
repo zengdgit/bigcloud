@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 2756a47822ef
+Revision ID: d5d15406b5ca
 Revises: 
-Create Date: 2017-01-17 15:46:27.685350
+Create Date: 2017-01-18 17:17:57.927420
 
 """
 from alembic import op
@@ -11,7 +11,7 @@ import sqlalchemy_utils
 
 
 # revision identifiers, used by Alembic.
-revision = '2756a47822ef'
+revision = 'd5d15406b5ca'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -88,19 +88,19 @@ def upgrade():
     op.create_table('secondary_classifications',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('二级分类名', sa.Unicode(length=255), nullable=True),
-    sa.Column('first_classification', sa.Integer(), nullable=True),
+    sa.Column('first_classification_id', sa.Integer(), nullable=True),
     sa.Column('创建时间', sa.DateTime(), nullable=True),
     sa.Column('修改时间', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['first_classification'], ['first_classifications.id'], ),
+    sa.ForeignKeyConstraint(['first_classification_id'], ['first_classifications.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('functions',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('功能名', sa.Unicode(length=255), nullable=True),
-    sa.Column('secondary_classification', sa.Integer(), nullable=True),
+    sa.Column('secondary_classification_id', sa.Integer(), nullable=True),
     sa.Column('创建时间', sa.DateTime(), nullable=True),
     sa.Column('修改时间', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['secondary_classification'], ['secondary_classifications.id'], ),
+    sa.ForeignKeyConstraint(['secondary_classification_id'], ['secondary_classifications.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('功能名')
     )

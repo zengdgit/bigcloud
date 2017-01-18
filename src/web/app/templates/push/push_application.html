@@ -68,19 +68,30 @@
                     </div>
 
                     <div class="am-form-group">
-                        <label for="add-form-function" class="am-u-sm-2 am-form-label">功能分类</label>
+                        <label for="add-form-function" class="am-u-sm-2 am-form-label">一级分类</label>
                         <div class="am-u-sm-10">
-                            <select id="add-form-first-classification" required name="first_classification"
-                                    style="margin-bottom: 5px;">
-                                <option value="">请选择一级分类</option>
-                                <option value="1">23</option>
+                            <select id="add-form-first-classification" required name="first_classification">
+                                <option value="">请选择</option>
                             </select>
-                            <select id="add-form-secondary-classification" required name="secondary_classification"
-                                    style="margin-bottom: 5px;">
-                                <option value="">请选择二级分类</option>
+                        </div>
+                        <span class="am-form-caret"></span>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="add-form-function" class="am-u-sm-2 am-form-label">二级分类</label>
+                        <div class="am-u-sm-10">
+                            <select id="add-form-secondary-classification" required name="secondary_classification">
+                                <option value="">请选择</option>
                             </select>
+                        </div>
+                        <span class="am-form-caret"></span>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="add-form-function" class="am-u-sm-2 am-form-label">三级分类</label>
+                        <div class="am-u-sm-10">
                             <select id="add-form-function" required name="function">
-                                <option value="">请选择三级分类</option>
+                                <option value="">请选择</option>
                             </select>
                         </div>
                         <span class="am-form-caret"></span>
@@ -296,6 +307,152 @@
 {% block custom_script %}
     <script>
         (function () {
+            initSelectData();
+
+            // 初始化下拉框数据。
+            function initSelectData() {
+                initFirstClassification();
+                initLanguage();
+                initOS();
+                initCPU();
+                initPackage();
+            }
+
+            // 初始化一级分类下拉框。
+            function initFirstClassification() {
+                $.ajax({
+                    url: 'api/first_classification',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (res, textStatus, jqXHR) {
+                        if (res["result"]) {
+                            var data = res["data"];
+                            var $selected = $("#add-form-first-classification");
+                            for (var value in data) {
+                                $selected.append('<option value="' + value + '">' + data[value] + '</option>');
+                            }
+                        }
+                    },
+                });
+            }
+
+            // 「添加应用表格」的一级分类下拉框的改变事件：清空二分类，加载二级分类。
+            $("#add-form-first-classification").on('change', function () {
+                var value = $("#add-form-first-classification").val();
+                $("#add-form-secondary-classification").html('<option value="">请选择</option>').change();
+                if (value != "") {
+                    $.ajax({
+                        url: 'api/first_classification/' + value.toString() + '/secondary_classification',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (res, textStatus, jqXHR) {
+                            if (res["result"]) {
+                                var data = res["data"];
+                                var $selected = $("#add-form-secondary-classification");
+                                for (var value in data) {
+                                    $selected.append('<option value="' + value + '">' + data[value] + '</option>');
+                                }
+                            }
+                        },
+                    });
+                }
+            });
+
+            // 「添加应用表格」的二级分类下拉框的改变事件：清空三级分类，加载三级分类。
+            $("#add-form-secondary-classification").on('change', function () {
+                var value = $("#add-form-secondary-classification").val();
+                $("#add-form-function").html('<option value="">请选择</option>').change();
+                if (value != "") {
+                    $.ajax({
+                        url: 'api/secondary_classification/' + value.toString() + '/function',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (res, textStatus, jqXHR) {
+                            if (res["result"]) {
+                                var data = res["data"];
+                                var $selected = $("#add-form-function");
+                                for (var value in data) {
+                                    $selected.append('<option value="' + value + '">' + data[value] + '</option>');
+                                }
+                            }
+                        },
+                    });
+                }
+            });
+
+
+            // 初始化语言下拉框。
+            function initLanguage() {
+                $.ajax({
+                    url: 'api/language',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (res, textStatus, jqXHR) {
+                        if (res["result"]) {
+                            var data = res["data"];
+                            var $selected = $("#add-form-language");
+                            for (var value in data) {
+                                $selected.append('<option value="' + value + '">' + data[value] + '</option>');
+                            }
+                        }
+                    },
+                });
+            }
+
+            // 初始化操作系统下拉框。
+            function initOS() {
+                $.ajax({
+                    url: 'api/os',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (res, textStatus, jqXHR) {
+                        if (res["result"]) {
+                            var data = res["data"];
+                            var $selected = $("#add-form-os");
+                            for (var value in data) {
+                                $selected.append('<option value="' + value + '">' + data[value] + '</option>');
+                            }
+                        }
+                    },
+                });
+            }
+
+            // 初始化CPU下拉框。
+            function initCPU() {
+                $.ajax({
+                    url: 'api/cpu',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (res, textStatus, jqXHR) {
+                        if (res["result"]) {
+                            var data = res["data"];
+                            var $selected = $("#add-form-cpu");
+                            for (var value in data) {
+                                $selected.append('<option value="' + value + '">' + data[value] + '</option>');
+                            }
+                        }
+                    },
+                });
+            }
+
+            // 初始化安装文件下拉框。
+            function initPackage() {
+                $.ajax({
+                    url: 'api/package',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (res, textStatus, jqXHR) {
+                        if (res["result"]) {
+                            var data = res["data"];
+                            var $selected = $("#add-form-package");
+                            for (var i = 0; i < data.length; i++) {
+                                $selected.append('<option value="' + data[i].id + '">' + data[i].filename + '</option>');
+                            }
+                        }
+                    },
+                });
+            }
+
             // 初始化「应用」表格。
             var table = $('#application-table').DataTable({
                 responsive: true,

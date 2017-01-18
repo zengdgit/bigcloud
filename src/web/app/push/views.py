@@ -6,7 +6,7 @@
 import os
 from flask import Flask, request, jsonify, render_template, url_for, redirect
 from . import push
-from ..models import Package, Application
+from ..models import Package, Application, OS, Language, CPU, FirstClassification, SecondaryClassification, Function
 from ..utils import checksum
 from flask_login import login_required, current_user
 from .forms import UploadForm
@@ -60,7 +60,7 @@ def get_all_packages():
     :return:
     '''
     packages = Package.query.all()
-    dic = []
+    data = []
     for i in packages:
         item = {
             "id": i.id,
@@ -69,9 +69,9 @@ def get_all_packages():
             "size": i.size,
             "md5": i.md5,
         }
-        dic.append(item)
+        data.append(item)
     logger.info("{0} - Get all packages".format(current_user.name))
-    res = {"result": True, "data": dic, "message": u"Get all packages successfully!"}
+    res = {"result": True, "data": data, "message": u"Get all packages successfully!"}
     return jsonify(res)
 
 
@@ -127,6 +127,99 @@ def delete_package_by_id(id):
 #################
 # application
 #################
+@push.route('/api/first_classification', methods=['GET'])
+@login_required
+def get_all_first_classification():
+    '''
+    【API】得到所有一级分类的数据。
+    :return:
+    '''
+    first_classification = FirstClassification.query.all()
+    data = {}
+    for i in first_classification:
+        data[i.id] = i.name
+    res = {"result": True, "data": data, "message": u"Get all first classification successfully!"}
+    return jsonify(res)
+
+
+@push.route('/api/first_classification/<int:id>/secondary_classification', methods=['GET'])
+@login_required
+def get_all_secondary_classification_by_first_classification_id(id):
+    '''
+    【API】根据一级分类的 ID 得到对应的二级分类。
+    :param id: 一级分类 ID
+    :return:
+    '''
+    secondary_classification = SecondaryClassification.query.filter(
+        SecondaryClassification.first_classification_id == id).all()
+    data = {}
+    for i in secondary_classification:
+        data[i.id] = i.name
+    res = {"result": True, "data": data, "message": u"Get secondary classification successfully!"}
+    return jsonify(res)
+
+
+@push.route('/api/secondary_classification/<int:id>/function', methods=['GET'])
+@login_required
+def get_all_function_by_secondary_classification_id(id):
+    '''
+    【API】根据二级分类的 ID 得到对应的三级分类。
+    :param id: 二级分类 ID
+    :return:
+    '''
+    function = Function.query.filter(Function.secondary_classification_id == id).all()
+    data = {}
+    for i in function:
+        data[i.id] = i.name
+    res = {"result": True, "data": data, "message": u"Get function successfully!"}
+    return jsonify(res)
+
+
+@push.route('/api/language', methods=['GET'])
+@login_required
+def get_all_languages():
+    '''
+    【API】得到所有语言的数据。
+    :return:
+    '''
+    languages = Language.query.all()
+    data = {}
+    for i in languages:
+        data[i.id] = i.name
+    res = {"result": True, "data": data, "message": u"Get all languages successfully!"}
+    return jsonify(res)
+
+
+@push.route('/api/os', methods=['GET'])
+@login_required
+def get_all_OS():
+    '''
+    【API】得到所有操作系统的数据。
+    :return:
+    '''
+    os = OS.query.all()
+    data = {}
+    for i in os:
+        data[i.id] = i.name
+    res = {"result": True, "data": data, "message": u"Get all OS successfully!"}
+    return jsonify(res)
+
+
+@push.route('/api/cpu', methods=['GET'])
+@login_required
+def get_all_CPU():
+    '''
+    【API】得到所有CPU的数据。
+    :return:
+    '''
+    cpu = CPU.query.all()
+    data = {}
+    for i in cpu:
+        data[i.id] = i.name
+    res = {"result": True, "data": data, "message": u"Get all CPU successfully!"}
+    return jsonify(res)
+
+
 @push.route('/api/application', methods=['GET'])
 @login_required
 def get_all_applications():
@@ -135,7 +228,7 @@ def get_all_applications():
     :return:
     '''
     applications = Application.query.all()
-    dic = []
+    data = []
     for i in applications:
         item = {
             "id": i.id,
@@ -148,9 +241,9 @@ def get_all_applications():
             "install_command": i.install_command,
             "package": i.package.name if i.package else "",
         }
-        dic.append(item)
-    logger.info("{0} - Get all applications".format(current_user.name))
-    res = {"result": True, "data": dic, "message": u"Get all applications successfully!"}
+        data.append(item)
+    # logger.info("{0} - Get all applications".format(current_user.name))
+    res = {"result": True, "data": data, "message": u"Get all applications successfully!"}
     return jsonify(res)
 
 
