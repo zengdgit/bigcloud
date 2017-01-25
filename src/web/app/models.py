@@ -4,14 +4,12 @@
 # 2016/12/22 Chen Weijian : Init
 
 import datetime
-from flask import Flask
 from . import db
 from . import login_manager
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy_utils import EmailType, IPAddressType
 
-app = Flask(__name__)
 
 ##################
 # auth
@@ -89,7 +87,6 @@ class LittleCloud(db.Model):
         db.session.commit()
 
 
-
 #################
 # push
 #################
@@ -148,7 +145,6 @@ class SecondaryClassification(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column('二级分类名', db.Unicode(255))
-
     first_classification_id = db.Column(db.Integer, db.ForeignKey('first_classifications.id'))
     created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
     modified_time = db.Column('修改时间', db.DateTime, onupdate=datetime.datetime.now)
@@ -166,7 +162,6 @@ class SecondaryClassification(db.Model):
         s = SecondaryClassification.query.get(self.id)
         if s:
             s.name = self.name
-
             s.first_classification_id = self.first_classification_id
             s.save()
         else:
@@ -182,9 +177,7 @@ class Function(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column('功能名', db.Unicode(255), unique=True)
-
     secondary_classification_id = db.Column(db.Integer, db.ForeignKey('secondary_classifications.id'))
-
     created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
     modified_time = db.Column('修改时间', db.DateTime, onupdate=datetime.datetime.now)
 
@@ -202,11 +195,9 @@ class Function(db.Model):
         if f:
             f.name = self.name
             f.secondary_classification_id = self.secondary_classification_id
-
             f.save()
         else:
             self.save()
-
 
     def delete(self):
         db.session.delete(self)
@@ -231,7 +222,6 @@ class Language(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
-
 
 
 class CPU(db.Model):
@@ -285,18 +275,15 @@ class Application(db.Model):
     cpu_id = db.Column(db.Integer, db.ForeignKey('cpu.id'), nullable=True)
     os_id = db.Column(db.Integer, db.ForeignKey('os.id'), nullable=True)
     package_id = db.Column(db.Integer, db.ForeignKey('packages.id'), nullable=True)
-
     install_command = db.Column('安装命令', db.String(255), nullable=True)
     created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
     modified_time = db.Column('修改时间', db.DateTime, onupdate=datetime.datetime.now)
-
 
     function = db.relationship('Function', backref=db.backref('Application'))
     language = db.relationship('Language', backref=db.backref('Application'))
     cpu = db.relationship('CPU', backref=db.backref('Application'))
     os = db.relationship('OS', backref=db.backref('Application'))
     package = db.relationship('Package', backref=db.backref('Application'))
-
 
     def __repr__(self):
         return '<Application %r>' % self.name
@@ -326,7 +313,6 @@ def init_db():
     firstC2.cover_save()
     firstC3 = FirstClassification(id=60000, name=u"应用软件")
     firstC3.cover_save()
-
 
     s1 = SecondaryClassification(id=11000, first_classification_id=firstC1.id, name=u"操作系统")
     s1.cover_save()
@@ -472,7 +458,6 @@ def init_db():
         Language(id=1, name=u"中文简体").save()
         Language(id=2, name=u"中文繁体").save()
         Language(id=3, name=u"美式英文").save()
-
 
     # 初始化CPU
     if len(CPU.query.all()) == 0:

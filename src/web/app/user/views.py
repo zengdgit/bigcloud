@@ -4,7 +4,6 @@
 # 2016/12/22 Xiao Weiwei : Init
 
 
-
 from flask import jsonify, render_template
 from . import user
 from flask_login import login_required
@@ -12,14 +11,10 @@ from .forms import UserCreateForm, UserEditForm
 from ..models import User
 
 
-from ..models import User
-
 @user.route('/')
 @login_required
 def index():
     return render_template('user/user.html')
-
-
 
 
 @user.route('/api/user', methods=['GET'])
@@ -38,8 +33,6 @@ def get_all_user():
     return jsonify(res)
 
 
-
-
 @user.route('/api/user', methods=['POST'])
 @login_required
 def create_user():
@@ -47,10 +40,8 @@ def create_user():
     if form.validate_on_submit():
         user1 = User.query.filter(User.name == form.name.data).first()
 
-
         # 防止添加同名称和同URL的小云
         if user1:
-
             res_massage = u"Failed! The littlecloud with same name or url have already excisted"
             return jsonify({"result": False, "data": None, "message": res_massage})
 
@@ -65,7 +56,6 @@ def create_user():
     return jsonify({"result": False, "data": None, "message": error})
 
 
-
 @user.route('/api/user/<int:id>', methods=['DELETE'])
 @login_required
 def delete_user_by_id(id):
@@ -75,8 +65,6 @@ def delete_user_by_id(id):
         return jsonify({"result": True, "data": None, "message": "Delete the user successfully!"})
     res_message = u"Failed! The user with id %s is not excisted!" % id
     return jsonify({"result": False, "data": None, "message": res_message})
-
-
 
 
 @user.route('/api/user/<int:id>', methods=['PUT'])
@@ -111,6 +99,4 @@ def get_user_by_id(id):
         }
         return jsonify({"result": True, "data": data, "message": u"Get the user successfully!"})
     res_message = u"Failed! The user with id %s is not excisted!" % id
-
     return jsonify({"result": False, "data": None, "message": res_message})
-

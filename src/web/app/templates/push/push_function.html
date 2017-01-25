@@ -70,29 +70,29 @@
                     </div>
                     </div>
 
-{#                    <div class="am-form-group">#}
-{##}
-{#                       <label for="doc-select-1" class="am-u-sm-3 am-form-label">一级分类</label>#}
-{#                        <div class="am-u-sm-9">#}
-{#                        <select id="first_id" name="first_id" placeholder="请选择">#}
-{#                                <option value=""></option>#}
-{#                                {% for first in first_list %}#}
-{#                                    <option value="{{ first.id }}">{{ first.name }}</option>#}
-{#                                {% endfor %}#}
-{#                            </select>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                        <div class="am-form-group">#}
-{#                        <label for="doc-select-1" class="chzn-select am-u-sm-3 am-form-label">二级分类</label>#}
-{#                        <div class="am-u-sm-9">#}
-{#                        <select id="secondary_id" name="secondary_id" placeholder="请选择">#}
-{#                             <option value=""></option>#}
-{#                            {% for second in second_list %}#}
-{#                                <option value="{{ second.id }}">{{ second.name }}</option>#}
-{#                            {% endfor %}#}
-{#                         </select>#}
-{#                        </div>#}
-{#                        </div>#}
+                    <div class="am-form-group">
+
+                       <label for="doc-select-1" class="am-u-sm-3 am-form-label">一级分类</label>
+                        <div class="am-u-sm-9">
+                        <select id="first_id" name="first_id" placeholder="请选择">
+                                <option value=""></option>
+                                {% for first in first_list %}
+                                    <option value="{{ first.id }}">{{ first.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                        <div class="am-form-group">
+                        <label for="doc-select-1" class="chzn-select am-u-sm-3 am-form-label">二级分类</label>
+                        <div class="am-u-sm-9">
+                        <select id="secondary_id" name="secondary_id" placeholder="请选择">
+                             <option value=""></option>
+                            {% for second in second_list %}
+                                <option value="{{ second.id }}">{{ second.name }}</option>
+                            {% endfor %}
+                         </select>
+                        </div>
+                        </div>
                      <div class="am-form-group">
                         <!--<div class="am-u-sm-10 am-u-sm-offset-2">-->
                         <div>
@@ -187,7 +187,6 @@
                             table.ajax.reload();
                         } else {
                             $("#add-error-modal").modal({closeViaDimmer: 0});
-                            console.log(responseObject['message']); // TODO 便于调试的错误信息，后期应删掉
                         }
                     },
                     url: "api/function",
@@ -197,6 +196,7 @@
 
                 return false;
             });
+
             }());
     </script>
 {% endblock custom_script %}

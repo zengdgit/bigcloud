@@ -5,11 +5,9 @@
 
 from app import app, db
 from flask import redirect, url_for
-from flask_login import login_required
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager, Shell
-
-# from app.models import init_db
+from flask_login import login_required
 
 manager = Manager(app)
 

@@ -1,4 +1,3 @@
-
 # -*- encoding: utf-8 -*-
 # Copyright 2016 Vinzor Co.,Ltd.
 #
@@ -29,3 +28,15 @@ class ApplicationForm(FlaskForm):
     package_id = StringField(id='package_id', validators=[DataRequired(), Length(1, 255)])
     install_command = StringField(id='install_command', validators=[DataRequired(), Length(1, 2083)])
     version = StringField(id='version', validators=[DataRequired(), Length(1, 255)])
+
+class FunctionCreateForm(FlaskForm):
+    id = StringField('Email', validators=[
+        DataRequired(),
+
+       ])
+    name = StringField('name', validators=[
+        DataRequired(),
+
+        ])
+
+
