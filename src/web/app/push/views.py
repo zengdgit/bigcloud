@@ -6,12 +6,13 @@
 import os
 from flask import Flask, request, jsonify, render_template, url_for, redirect
 from . import push
-from ..models import Package
+
+from ..models import Package,Function,FirstClassification,SecondaryClassification
 from ..utils import checksum
 from flask_login import login_required, current_user
-from .forms import UploadForm
+from .forms import UploadForm,FunctionCreateForm
 from .. import upload, logger
-
+from .. import db
 
 @push.route('/')
 @login_required
@@ -36,19 +37,69 @@ def usergroup():
 def application():
     return render_template('push/push_application.html')
 
+@push.route('/function')
+@login_required
+def function():
+    # first_list = FirstClassification.query.all()
+    # second_list=SecondaryClassification.query.all()
 
+    # return render_template('push/push_function.html',first_list=first_list,second_list=second_list)
+     return render_template('push/push_function.html')
 @push.route('/package')
 @login_required
 def package():
     return render_template('push/push_package.html')
 
 
-@push.route('/function')
+#################
+# function
+#################
+@push.route('/api/function', methods=['GET'])
 @login_required
-def function():
-    return render_template('push/push_function.html')
+def get_all_functions():
+    '''
+    【API】得到所有功能的数据。
+    :return:
+    '''
+    function = Function.query.all()
+    dic = []
 
+    for i in function:
+        secondary_classification=SecondaryClassification.query.filter_by(id=i.secondary_classification).first()
+        first_classification=FirstClassification.query.filter_by(id=SecondaryClassification.first_classification).first()
+        item = {
+            "id": i.id,
+            "name": i.name,
+            "first_classification":first_classification.name,
+            "secondary_classification":secondary_classification.name,
+        }
+        # print(first_classification.name);
+        dic.append(item)
+    # first_list = FirstClassification.query.all()
+    # second_list=SecondaryClassification.query.all()
+    logger.info("{0} - Get all function".format(current_user.name))
+    res = {"result": True, "data": dic, "message": u"Get all function successfully!"}
+    # return jsonify(res)
+    # return render_template('push/push_function.html',first_list=first_list,second_list=second_list)
+    return jsonify(res)
 
+@push.route('/api/function', methods=['POST'])
+@login_required
+def create_function():
+    form = FunctionCreateForm()
+    # print(form.first_classification.data)
+    if form.validate_on_submit():
+        new_function = Function(
+            id=form.id.data,
+            name=form.name.data,
+        )
+        print(form.name.data)
+        new_function.save()
+        logger.info("{0} - Add {1} function with id {2}".format(current_user.name, form.name.data, function.id))
+        return jsonify({"result": True, "data": None, "message": u"Add new function successfully"})
+    error = form.errors
+    logger.error("{0} - Fail to add function because {1}".format(current_user.name, error))
+    return jsonify({"result": False, "data": None, "message": error})
 #################
 # package
 #################
