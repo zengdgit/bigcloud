@@ -10,7 +10,7 @@ from ..models import Package, Application, OS, Language, CPU, FirstClassificatio
     AppGroup
 from ..utils import checksum
 from flask_login import login_required, current_user
-from .forms import UploadForm, ApplicationForm
+from .forms import UploadForm, ApplicationForm, AppGroupForm
 from .. import upload, logger
 
 
@@ -361,4 +361,27 @@ def get_all_appgroups():
         }
         data.append(item)
     res = {"result": True, "data": data, "message": u"Get all applications successfully!"}
+    return jsonify(res)
+
+
+@push.route('/api/appgroup', methods=['POST'])
+@login_required
+def add_appgroup():
+    '''
+    【API】添加应用组。
+    :return:
+    '''
+    form = AppGroupForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        apps = form.apps.raw_data
+        new_appgroup = AppGroup(
+            name=form.name.data,
+        )
+        new_appgroup.save()
+        logger.info("{0} - Add {1} appgroup with id {2}".format(current_user.name, name, new_appgroup.id))
+        return jsonify({"result": True, "data": None, "message": "Add the appgroup successfully"})
+    err = form.errors
+    logger.error("{0} - Fail to add appgroup because {1}".format(current_user.name, err))
+    res = {"result": True, "data": None, "message": err}
     return jsonify(res)

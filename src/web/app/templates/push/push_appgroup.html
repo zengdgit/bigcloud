@@ -75,11 +75,8 @@
                     <div class="am-form-group">
                         <label for="doc-select-1" class="am-u-sm-2 am-form-label">所含应用</label>
                         <div class="am-u-sm-10">
-                            <select id="add-form-apps" required name="apps" multiple data-am-selected>
-                                <option value="">请选择</option>
-                                <option value="1">请选择1</option>
-                                <option value="2">请选择2</option>
-                                <option value="3">请选择3</option>
+                            <select id="add-form-apps" required name="apps" multiple data-am-selected
+                                    data-placeholder="请选择">
                             </select>
                         </div>
                         <span class="am-form-caret"></span>
@@ -268,8 +265,14 @@
 {% endblock custom_modal %}
 
 {% block custom_script %}
+    <script src="{{ url_for('static', filename='js/amazeui.chosen.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/amazeui.chosen.css') }}"/>
+
     <script>
         (function () {
+            // 初始化下拉框数据。
+            initSelectData();
+
             // 初始化「应用组」表格。
             var table = $('#appgroup-table').DataTable({
                 responsive: true,
@@ -362,6 +365,8 @@
             $('#add-appgroup-modal').on('closed.modal.amui', function () {
                 // 清空表单数据。
                 $("#add-appgroup-form").get(0).reset();
+                $("#add-form-apps").chosen("destroy");
+                $('#add-form-apps').chosen({width: "100%"});
 
                 // 重置表单验证。
                 $("#add-appgroup-form").validator('destroy');
@@ -397,5 +402,33 @@
             });
 
         }());
+
+        // 初始化下拉框数据。
+        function initSelectData() {
+            initApps();
+        }
+
+        // 初始化所含应用下拉框。
+        function initApps() {
+            $.ajax({
+                url: 'api/application',
+                type: 'GET',
+                dataType: 'json',
+                success: function (res, textStatus, jqXHR) {
+                    if (res["result"]) {
+                        var data = res["data"];
+                        var $addSelected = $("#add-form-apps");
+                        var $editSelected = $("#edit-form-apps");
+                        for (var i = 0; i < data.length; i++) {
+                            var app = data[i];
+                            $addSelected.append('<option value="' + app.id + '">' + app.name + '</option>');
+                            $editSelected.append('<option value="' + app.id + '">' + app.name + '</option>');
+                        }
+
+                        $('#add-form-apps').chosen({width: "100%"});
+                    }
+                },
+            });
+        }
     </script>
 {% endblock custom_script %}
