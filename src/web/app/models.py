@@ -297,6 +297,33 @@ class Application(db.Model):
         db.session.commit()
 
 
+AppGroup_Application = db.Table('appgroup_application',
+                                db.Column('appgroup_id', db.Integer, db.ForeignKey('appgroups.id')),
+                                db.Column('application_id', db.Integer, db.ForeignKey('applications.id'))
+                                )
+
+
+class AppGroup(db.Model):
+    __tablename__ = 'appgroups'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column('应用组名', db.Unicode(255), unique=True)
+    description = db.Column('描述', db.Unicode(255), unique=True)
+
+    applications = db.relationship('Application', secondary=AppGroup_Application, backref=db.backref('AppGroup'))
+
+    def __repr__(self):
+        return '<AppGroup %r>' % self.name
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
 #################
 # 初始化数据
 #################

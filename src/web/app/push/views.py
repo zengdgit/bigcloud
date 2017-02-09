@@ -6,7 +6,8 @@
 import os
 from flask import Flask, request, jsonify, render_template, url_for, redirect
 from . import push
-from ..models import Package, Application, OS, Language, CPU, FirstClassification, SecondaryClassification, Function
+from ..models import Package, Application, OS, Language, CPU, FirstClassification, SecondaryClassification, Function, \
+    AppGroup
 from ..utils import checksum
 from flask_login import login_required, current_user
 from .forms import UploadForm, ApplicationForm
@@ -25,10 +26,10 @@ def littlecloud():
     return render_template('push/push_littlecloud.html')
 
 
-@push.route('/usergroup')
+@push.route('/appgroup')
 @login_required
-def usergroup():
-    return render_template('push/push_usergroup.html')
+def appgroup():
+    return render_template('push/push_appgroup.html')
 
 
 @push.route('/application')
@@ -334,3 +335,30 @@ def delete_Application_by_id(id):
     res_message = u"Failed! The application with id %s is not excisted" % id
     logger.error("{0} - {1}".format(current_user.name, res_message))
     return jsonify({"result": False, "data": None, "message": res_message})
+
+
+#################
+# appgroup
+#################
+@push.route('/api/appgroup', methods=['GET'])
+@login_required
+def get_all_appgroups():
+    '''
+    【API】得到所有应用组的数据。
+    :return:
+    '''
+    groups = AppGroup.query.all()
+    data = []
+    for i in groups:
+        apps = []
+        for a in i.applications:
+            apps.append({"id": a.id, "name": a.name})
+        item = {
+            "id": i.id,
+            "name": i.name,
+            "description": i.description,
+            "apps": apps,
+        }
+        data.append(item)
+    res = {"result": True, "data": data, "message": u"Get all applications successfully!"}
+    return jsonify(res)

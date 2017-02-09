@@ -252,8 +252,8 @@
                     </li>
 
                     <li class="sidebar-nav-link">
-                        <a href="{{ url_for('push.usergroup') }}"
-                           class="{{ 'sub-active' if request.path.startswith('/push/usergroup') else '' }}">
+                        <a href="{{ url_for('push.appgroup') }}"
+                           class="{{ 'sub-active' if request.path.startswith('/push/appgroup') else '' }}">
                             <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 管理应用组
                         </a>
                     </li>
@@ -341,6 +341,13 @@
             </div>
 
         {% endblock content_body %}
+
+        <footer data-am-widget="footer" class="am-footer am-footer-default" data-am-footer="{  }"
+                style="position: absolute; bottom: 0; width: 100%;">
+            <div class="am-footer-miscs ">
+                <p>云管理系统 © 2013-2017 广州云晫信息科技有限公司</p>
+            </div>
+        </footer>
     </div>
 
 
