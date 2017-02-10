@@ -374,9 +374,16 @@ def add_appgroup():
     form = AppGroupForm()
     if form.validate_on_submit():
         name = form.name.data
-        apps = form.apps.raw_data
+        apps_id = form.apps.raw_data
+        apps = []
+        for id in apps_id:
+            application = Application.query.get(int(id))
+            if application:
+                apps.append(application)
         new_appgroup = AppGroup(
             name=form.name.data,
+            description=form.description.data,
+            applications=apps,
         )
         new_appgroup.save()
         logger.info("{0} - Add {1} appgroup with id {2}".format(current_user.name, name, new_appgroup.id))
@@ -385,3 +392,57 @@ def add_appgroup():
     logger.error("{0} - Fail to add appgroup because {1}".format(current_user.name, err))
     res = {"result": True, "data": None, "message": err}
     return jsonify(res)
+
+
+@push.route('/api/appgroup/<int:id>', methods=['PUT'])
+@login_required
+def update_appgroup_by_id(id):
+    '''
+    【API】根据 id 更新应用组。
+    :param id: 应用组 ID
+    :return:
+    '''
+    form = AppGroupForm()
+    if form.validate_on_submit():
+        group = AppGroup.query.get(int(id))
+        if group:
+            apps_id = form.apps.raw_data
+            apps = []
+            for id in apps_id:
+                application = Application.query.get(int(id))
+                if application:
+                    apps.append(application)
+
+            group.name = form.name.data
+            group.description = form.description.data
+            group.applications = apps
+            group.save()
+            logger.info(
+                "{0} - Update {1} appgroup with id {2}".format(current_user.name, group.name, application.id))
+            return jsonify({"result": True, "data": None, "message": u"Edit new appgroup successfully"})
+        res_message = u"Failed! The appgroup with id %s is not excisted" % id
+        logger.error("{0} - {1}".format(current_user.name, res_message))
+        return jsonify({"result": False, "data": None, "message": res_message})
+
+    error = form.errors
+    logger.error("{0} - Fail to update appgroup because {1}".format(current_user.name, error))
+    return jsonify({"result": False, "data": None, "message": error})
+
+
+@push.route('/api/appgroup/<int:id>', methods=['DELETE'])
+@login_required
+def delete_AppGroup_by_id(id):
+    '''
+    【API】根据 id 删除应用组。
+    :param id: 应用组 ID
+    :return:
+    '''
+    group = AppGroup.query.get(int(id))
+    if group:
+        name = group.name
+        group.delete()
+        logger.info("{0} - Delete {1} appgroup with id {2}".format(current_user.name, name, id))
+        return jsonify({"result": True, "data": None, "message": "Delete the appgroup successfully"})
+    res_message = u"Failed! The appgroup with id %s is not excisted" % id
+    logger.error("{0} - {1}".format(current_user.name, res_message))
+    return jsonify({"result": False, "data": None, "message": res_message})

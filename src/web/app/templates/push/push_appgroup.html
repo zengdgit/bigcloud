@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 
+<!--
+TODO 优化方案
+- 添加和编辑应用组的时候，一开始就算没选择所含应用，Validator也会认为格式正确。是一个Bug，应修复。
+- 删除时弹出的 Modal，提醒信息可以详细一点。
+- 对于操作不成功弹出的 Alert 窗口，失败信息可以详细一点。
+-->
+
 {% block content_head %}
     <div class="container-fluid am-cf">
         <div class="row">
@@ -7,7 +14,8 @@
                 <div class="page-header-heading"><span class="am-icon-mixcloud page-header-heading-icon"></span> 云推送
                     <small>管理应用组</small>
                 </div>
-                <p class="page-header-description">应用组的增删改查。应用组内有若干个应用。</p>
+                <p class="page-header-description">创建应用组来整合同类型应用，然后<a href="{{ url_for('push.littlecloud') }}">推送到小云</a>。
+                </p>
             </div>
         </div>
     </div>
@@ -75,8 +83,7 @@
                     <div class="am-form-group">
                         <label for="doc-select-1" class="am-u-sm-2 am-form-label">所含应用</label>
                         <div class="am-u-sm-10">
-                            <select id="add-form-apps" required name="apps" multiple data-am-selected
-                                    data-placeholder="请选择">
+                            <select id="add-form-apps" required name="apps" multiple data-placeholder="请选择">
                             </select>
                         </div>
                         <span class="am-form-caret"></span>
@@ -96,108 +103,40 @@
     <div class="am-modal am-modal-no-btn" tabindex="-1" id="edit-appgroup-modal">
         <div class="am-modal-dialog">
             <div class="am-modal-hd">
-                <h1>编辑应用</h1>
+                <h1>编辑应用组</h1>
                 <a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
             </div>
             <div class="am-modal-bd">
-                <form id="edit-application-form" class="am-form am-form-horizontal" data-am-validator>
+                <form id="edit-appgroup-form" class="am-form am-form-horizontal" data-am-validator>
                     <input type="number" id="edit-form-id" style="display: none;">
+
                     <div class="am-form-group">
-                        <label for="add-form-name" class="am-u-sm-2 am-form-label">应用名称</label>
+                        <label for="edit-form-name" class="am-u-sm-2 am-form-label">组名称</label>
                         <div class="am-u-sm-10">
                             <input type="text" id="edit-form-name" name="name" minlength="1" maxlength="50"
                                    pattern="^\w+$"
-                                   placeholder="例：百度全家桶" required>
+                                   placeholder="例：Office 办公套件" required>
                         </div>
                     </div>
 
                     <div class="am-form-group">
-                        <label for="add-form-function" class="am-u-sm-2 am-form-label">一级分类</label>
+                        <label for="edit-form-description" class="am-u-sm-2 am-form-label">描述</label>
                         <div class="am-u-sm-10">
-                            <select id="edit-form-first-classification" required name="first_classification_id">
-                                <option value="">请选择</option>
+                            <input type="text" id="edit-form-description" name="description" minlength="1"
+                                   maxlength="50"
+                                   pattern="^\w+$"
+                                   placeholder="例：用于文书工作的软件集合" required>
+                        </div>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="edit-form-apps" class="am-u-sm-2 am-form-label">所含应用</label>
+                        <div class="am-u-sm-10">
+                            <select id="edit-form-apps" required name="apps" multiple data-placeholder="请选择">
                             </select>
                         </div>
                         <span class="am-form-caret"></span>
                     </div>
-
-                    <div class="am-form-group">
-                        <label for="add-form-function" class="am-u-sm-2 am-form-label">二级分类</label>
-                        <div class="am-u-sm-10">
-                            <select id="edit-form-secondary-classification" required name="secondary_classification_id">
-                                <option value="">请选择</option>
-                            </select>
-                        </div>
-                        <span class="am-form-caret"></span>
-                    </div>
-
-                    <div class="am-form-group">
-                        <label for="add-form-function" class="am-u-sm-2 am-form-label">三级分类</label>
-                        <div class="am-u-sm-10">
-                            <select id="edit-form-function" required name="function_id">
-                                <option value="">请选择</option>
-                            </select>
-                        </div>
-                        <span class="am-form-caret"></span>
-                    </div>
-
-                    <div class="am-form-group">
-                        <label for="doc-select-1" class="am-u-sm-2 am-form-label">语言</label>
-                        <div class="am-u-sm-10">
-                            <select id="edit-form-language" required name="language_id">
-                                <option value="">请选择</option>
-                            </select>
-                        </div>
-                        <span class="am-form-caret"></span>
-                    </div>
-
-                    <div class="am-form-group">
-                        <label for="doc-select-1" class="am-u-sm-2 am-form-label">操作系统</label>
-                        <div class="am-u-sm-10">
-                            <select id="edit-form-os" required name="os_id">
-                                <option value="">请选择</option>
-                            </select>
-                        </div>
-                        <span class="am-form-caret"></span>
-                    </div>
-
-                    <div class="am-form-group">
-                        <label for="doc-select-1" class="am-u-sm-2 am-form-label">CPU</label>
-                        <div class="am-u-sm-10">
-                            <select id="edit-form-cpu" required name="cpu_id">
-                                <option value="">请选择</option>
-                            </select>
-                        </div>
-                        <span class="am-form-caret"></span>
-                    </div>
-
-                    <div class="am-form-group">
-                        <label for="doc-select-1" class="am-u-sm-2 am-form-label">安装文件</label>
-                        <div class="am-u-sm-10">
-                            <select id="edit-form-package" required name="package_id">
-                                <option value="">请选择</option>
-                            </select>
-                        </div>
-                        <span class="am-form-caret"></span>
-                    </div>
-
-                    <div class="am-form-group">
-                        <label for="add-form-url" class="am-u-sm-2 am-form-label">安装命令</label>
-                        <div class="am-u-sm-10">
-                            <input type="text" id="edit-form-install-command" name="install_command" minlength="1"
-                                   maxlength="2083"
-                                   placeholder="例：pip install" required>
-                        </div>
-                    </div>
-
-                    <div class="am-form-group">
-                        <label for="add-form-url" class="am-u-sm-2 am-form-label">版本号</label>
-                        <div class="am-u-sm-10">
-                            <input type="text" id="edit-form-version" name="version" minlength="1" maxlength="50"
-                                   placeholder="例：1.0" required>
-                        </div>
-                    </div>
-
 
                     <div class="am-form-group">
                         <div>
@@ -240,7 +179,6 @@
         <div class="am-modal-dialog">
             <div class="am-modal-hd">警告</div>
             <div class="am-modal-bd">
-                <!--TODO 最好显示该应用的部分信息。-->
                 确定要删除这个应用吗？
             </div>
             <div class="am-modal-footer">
@@ -318,7 +256,19 @@
                                 var tr = $link.closest('tr');
                                 var row = table.row(tr);
                                 var rowData = row.data();
-                                deleteApplicationById(rowData.id);
+                                var url = "api/appgroup/" + rowData.id.toString();
+                                $.ajax({
+                                    url: url,
+                                    type: 'DELETE',
+                                    dataType: 'json',
+                                    success: function (data, textStatus, jqXHR) {
+                                        if (data["result"]) {
+                                            table.ajax.reload();
+                                        } else {
+                                            $("#delete-error-modal").modal({closeViaDimmer: 0});
+                                        }
+                                    },
+                                });
                             },
                         });
                     });
@@ -328,30 +278,27 @@
                         var tr = this.closest('tr');
                         var row = table.row(tr);
                         var rowData = row.data();
+                        var apps = rowData.apps;
+                        var appsList = [];
+                        for (var i = 0; i < apps.length; i++) {
+                            appsList.push(apps[i].id);
+                        }
 
                         // 清空表单数据。
-                        $("#edit-application-form").get(0).reset();
+                        $("#edit-appgroup-form").get(0).reset();
+                        $("#edit-form-apps").trigger('chosen:updated');
 
                         // 覆盖表单数据。
                         $("#edit-form-id").val(rowData.id);
                         $("#edit-form-name").val(rowData.name);
-                        $("#edit-form-first-classification").val(rowData.first_classification_id).change();
-                        $("#edit-form-secondary-classification").append('<option value="' + rowData.secondary_classification_id + '">' + rowData.secondary_classification + '</option>');
-                        $("#edit-form-secondary-classification").val(rowData.secondary_classification_id).change();
-                        $("#edit-form-function").append('<option value="' + rowData.function_id + '">' + rowData.function + '</option>');
-                        $("#edit-form-function").val(rowData.function_id).change();
-                        $("#edit-form-language").val(rowData.language_id);
-                        $("#edit-form-os").val(rowData.os_id);
-                        $("#edit-form-cpu").val(rowData.cpu_id);
-                        $("#edit-form-package").val(rowData.package_id);
-                        $("#edit-form-install-command").val(rowData.install_command);
-                        $("#edit-form-version").val(rowData.version);
+                        $("#edit-form-description").val(rowData.description);
+                        $("#edit-form-apps").val(appsList).trigger('chosen:updated');
 
                         // 渲染编辑modal。
-                        $('#edit-application-modal').modal();
+                        $('#edit-appgroup-modal').modal();
 
                         // 激活表单验证样式（渲染出modal后激活才有效果）。
-                        var isFormValid = $('#edit-application-form').validator('isFormValid');
+                        var isFormValid = $('#edit-appgroup-form').validator('isFormValid');
                     });
                 },
             });
@@ -365,8 +312,7 @@
             $('#add-appgroup-modal').on('closed.modal.amui', function () {
                 // 清空表单数据。
                 $("#add-appgroup-form").get(0).reset();
-                $("#add-form-apps").chosen("destroy");
-                $('#add-form-apps').chosen({width: "100%"});
+                $("#add-form-apps").trigger('chosen:updated');
 
                 // 重置表单验证。
                 $("#add-appgroup-form").validator('destroy');
@@ -388,13 +334,44 @@
                     // 提交后的回调函数
                     success: function (responseObject, statusText) {
                         if (responseObject['result']) {
-                            table.ajax.reload();
+                            $('#appgroup-table').DataTable().ajax.reload();
                         } else {
                             $("#add-error-modal").modal({closeViaDimmer: 0});
                         }
                     },
                     url: "api/appgroup",
                     type: "post",
+                    dataType: "json"
+                });
+
+                return false;
+            });
+
+            // 「编辑应用组表单」的提交方法：采用异步提交的方式。
+            $('#edit-appgroup-form').submit(function (e) {
+                var id = $("#edit-form-id").val();
+                var url = "api/appgroup/" + id.toString();
+
+                $(this).ajaxSubmit({
+                    // 提交前的回调函数：用于判断表单验证是否通过。
+                    beforeSubmit: function (formData, jqForm, options) {
+                        var formValidity = $('#edit-appgroup-form').validator('isFormValid');
+                        if (formValidity) {
+                            $('#edit-appgroup-modal').modal('close');
+                            return true;
+                        }
+                        return false;
+                    },
+                    // 提交后的回调函数
+                    success: function (responseObject, statusText) {
+                        if (responseObject['result']) {
+                            $('#appgroup-table').DataTable().ajax.reload();
+                        } else {
+                            $("#edit-error-modal").modal({closeViaDimmer: 0});
+                        }
+                    },
+                    url: url,
+                    type: "put",
                     dataType: "json"
                 });
 
@@ -424,8 +401,8 @@
                             $addSelected.append('<option value="' + app.id + '">' + app.name + '</option>');
                             $editSelected.append('<option value="' + app.id + '">' + app.name + '</option>');
                         }
-
-                        $('#add-form-apps').chosen({width: "100%"});
+                        $addSelected.chosen({width: "100%"});
+                        $editSelected.chosen({width: "100%"});
                     }
                 },
             });
