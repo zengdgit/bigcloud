@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+<!--
+TODO 优化方案
+- 删除时弹出的 Modal，提醒信息可以详细一点。
+- 对于操作不成功弹出的 Alert 窗口，失败信息可以详细一点。
+-->
+
 {% block content_head %}
     <div class="container-fluid am-cf">
         <div class="row">
@@ -311,7 +317,6 @@
         <div class="am-modal-dialog">
             <div class="am-modal-hd">警告</div>
             <div class="am-modal-bd">
-                <!--TODO 最好显示该应用的部分信息。-->
                 确定要删除这个应用吗？
             </div>
             <div class="am-modal-footer">
@@ -499,7 +504,7 @@
                                     dataType: 'json',
                                     success: function (data, textStatus, jqXHR) {
                                         if (data["result"]) {
-                                            $('#application-table').DataTable().ajax.reload();
+                                            table.ajax.reload();
                                         } else {
                                             $("#delete-error-modal").modal({closeViaDimmer: 0});
                                         }
