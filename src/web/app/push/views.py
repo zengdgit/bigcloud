@@ -408,8 +408,8 @@ def update_appgroup_by_id(id):
         if group:
             apps_id = form.apps.raw_data
             apps = []
-            for id in apps_id:
-                application = Application.query.get(int(id))
+            for app_id in apps_id:
+                application = Application.query.get(int(app_id))
                 if application:
                     apps.append(application)
 
@@ -418,7 +418,7 @@ def update_appgroup_by_id(id):
             group.applications = apps
             group.save()
             logger.info(
-                "{0} - Update {1} appgroup with id {2}".format(current_user.name, group.name, application.id))
+                "{0} - Update {1} appgroup with id {2}".format(current_user.name, group.name, group.id))
             return jsonify({"result": True, "data": None, "message": u"Edit new appgroup successfully"})
         res_message = u"Failed! The appgroup with id %s is not excisted" % id
         logger.error("{0} - {1}".format(current_user.name, res_message))
