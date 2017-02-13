@@ -16,3 +16,7 @@ class LittleCloudForm(FlaskForm):
     protocol = StringField(id='protocol', validators=[DataRequired(), Length(1, 20)])
     email = StringField(id='email', validators=[DataRequired(), Email()])
     phone = IntegerField(id='phone', validators=[DataRequired()])
+
+
+class UpdateAppGroupsForm(FlaskForm):
+    appgroups = StringField(id='appgroups', validators=[DataRequired()])
