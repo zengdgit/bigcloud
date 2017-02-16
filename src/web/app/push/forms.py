@@ -29,14 +29,21 @@ class ApplicationForm(FlaskForm):
     install_command = StringField(id='install_command', validators=[DataRequired(), Length(1, 2083)])
     version = StringField(id='version', validators=[DataRequired(), Length(1, 255)])
 
-class FunctionCreateForm(FlaskForm):
-    id = StringField('Email', validators=[
-        DataRequired(),
 
-       ])
-    name = StringField('name', validators=[
-        DataRequired(),
+class FunctionForm(FlaskForm):
+    id = StringField(id='id', validators=[DataRequired(), Length(1, 50)])
+    name = StringField(id='name', validators=[DataRequired(), Length(1, 50)])
+    secondary_classification_id = StringField(id='secondary_classification_id',
+                                              validators=[DataRequired(), Length(1, 10)])
+    first_classification_id = StringField(id='first_classification_id', validators=[DataRequired(), Length(1, 10)])
 
-        ])
 
+
+
+
+
+class AppGroupForm(FlaskForm):
+    name = StringField(id='name', validators=[DataRequired(), Length(1, 50)])
+    description = StringField(id='description', validators=[DataRequired(), Length(1, 50)])
+    apps = StringField(id='apps', validators=[DataRequired()])
 

@@ -52,42 +52,6 @@ def load_user(user_id):
 
 
 #################
-# connect
-#################
-class ProtocolType(object):
-    HTTP = 'HTTP'
-    HTTPS = 'HTTPS'
-
-
-class LittleCloud(db.Model):
-    __tablename__ = 'littleclouds'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column('小云平台名称', db.Unicode(255), unique=True)
-    url = db.Column('小云平台URL', db.String(255), unique=True)
-    is_connectible = db.Column('是否允许接入', db.Boolean, default=False)
-    is_connected = db.Column('是否已经接入', db.Boolean, default=False)
-    phone = db.Column('联系电话', db.String(30), nullable=True)
-    email = db.Column('联系邮箱', EmailType, nullable=True)
-    ip = db.Column('接入IP', IPAddressType, nullable=True)
-    port = db.Column('接入端口', db.Integer, nullable=True)
-    protocol = db.Column('接入协议', db.String(20), default=ProtocolType.HTTP)
-    created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
-    modified_time = db.Column('修改时间', db.DateTime, onupdate=datetime.datetime.now)
-
-    def __repr__(self):
-        return '<LittleCloud %r>' % self.name
-
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
-
-
-#################
 # push
 #################
 class Package(db.Model):
@@ -287,6 +251,77 @@ class Application(db.Model):
 
     def __repr__(self):
         return '<Application %r>' % self.name
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
+AppGroup_Application = db.Table('appgroup_application',
+                                db.Column('appgroup_id', db.Integer, db.ForeignKey('appgroups.id')),
+                                db.Column('application_id', db.Integer, db.ForeignKey('applications.id'))
+                                )
+
+
+class AppGroup(db.Model):
+    __tablename__ = 'appgroups'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column('应用组名', db.Unicode(255), unique=True)
+    description = db.Column('描述', db.Unicode(255), unique=True)
+
+    applications = db.relationship('Application', secondary=AppGroup_Application, backref=db.backref('AppGroup'))
+
+    def __repr__(self):
+        return '<AppGroup %r>' % self.name
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
+#################
+# connect
+#################
+class ProtocolType(object):
+    HTTP = 'HTTP'
+    HTTPS = 'HTTPS'
+
+
+LittleCloud_AppGroup = db.Table('littlecloud_appgroup',
+                                db.Column('littlecloud_id', db.Integer, db.ForeignKey('littleclouds.id')),
+                                db.Column('appgroup_id', db.Integer, db.ForeignKey('appgroups.id'))
+                                )
+
+
+class LittleCloud(db.Model):
+    __tablename__ = 'littleclouds'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column('小云平台名称', db.Unicode(255), unique=True)
+    url = db.Column('小云平台URL', db.String(255), unique=True)
+    is_connectible = db.Column('是否允许接入', db.Boolean, default=False)
+    is_connected = db.Column('是否已经接入', db.Boolean, default=False)
+    phone = db.Column('联系电话', db.String(30), nullable=True)
+    email = db.Column('联系邮箱', EmailType, nullable=True)
+    ip = db.Column('接入IP', IPAddressType, nullable=True)
+    port = db.Column('接入端口', db.Integer, nullable=True)
+    protocol = db.Column('接入协议', db.String(20), default=ProtocolType.HTTP)
+    created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
+    modified_time = db.Column('修改时间', db.DateTime, onupdate=datetime.datetime.now)
+
+    appgroups = db.relationship('AppGroup', secondary=LittleCloud_AppGroup, backref=db.backref('LittleCloud'))
+
+    def __repr__(self):
+        return '<LittleCloud %r>' % self.name
 
     def save(self):
         db.session.add(self)
