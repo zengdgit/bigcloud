@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+<!--
+TODO 优化方案
+- 应用组多选下拉框存在格式验证的Bug，就算没有选择也可以提交，应修复。
+- 对于操作不成功弹出的 Alert 窗口，失败信息可以详细一点。
+-->
+
 {% block content_head %}
     <div class="container-fluid am-cf">
         <div class="row">
@@ -7,7 +13,7 @@
                 <div class="page-header-heading"><span class="am-icon-mixcloud page-header-heading-icon"></span> 云推送
                     <small>推送小云</small>
                 </div>
-                <p class="page-header-description">应该要以列表的形式显示已接入的小云，并且把应用组注册到小云上。</p>
+                <p class="page-header-description">添加应用组到小云。已接入的小云会自动同步应用组数据。</p>
             </div>
         </div>
     </div>
@@ -17,17 +23,229 @@
     <div class="row-content am-cf">
         <div class="widget am-cf">
             <div class="widget-head am-cf">
-                <div class="widget-title am-fl">已接入的小云</div>
+                <div class="widget-title am-fl">小云列表</div>
                 <div class="widget-function am-fr">
-                    <a href="javascript:;" class="am-icon-cog"></a>
+                    <i class="am-icon-question-circle am-icon-fw"
+                       data-am-popover="{content: '该列表展示的是具备接入权限的小云', trigger: 'hover focus'}"></i>
                 </div>
             </div>
             <div class="widget-body am-fr">
-                <div style="height: 400px" class="" id="tpl-echarts-A">
-                    插个表
+                <div style="min-height: 400px;width: 98%;margin: auto">
+                    <table width="100%" id="littlecloud-table"
+                           class="am-table am-table-compact am-table-striped tpl-table-black am-text-nowrap">
+                        <thead>
+                        <tr>
+                            <th class="name">小云名称</th>
+                            <th class="is_connected">接入状态</th>
+                            <th class="groups nosort">所含应用组</th>
+                            <th class="operation nosort">操作</th>
+                        </tr>
+                        </thead>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
-
 {% endblock content_body %}
+
+
+{% block custom_modal %}
+    <!--修改应用组的Modal-->
+    <div class="am-modal am-modal-no-btn" tabindex="-1" id="edit-appgroup-modal">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">
+                <h1>修改应用组</h1>
+                <a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+            </div>
+            <div class="am-modal-bd">
+                <form id="edit-appgroup-form" class="am-form am-form-horizontal" data-am-validator>
+                    <input type="number" id="edit-form-id" style="display: none;">
+
+                    <div class="am-form-group">
+                        <label for="edit-form-name" class="am-u-sm-2 am-form-label">小云名称</label>
+                        <div class="am-u-sm-10">
+                            <input type="text" id="edit-form-name" name="name" minlength="1" maxlength="50"
+                                   placeholder="例：Office 办公套件" required readonly>
+                        </div>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="edit-form-appgroups" class="am-u-sm-2 am-form-label">应用组</label>
+                        <div class="am-u-sm-10">
+                            <select id="edit-form-appgroups" required name="appgroups" multiple data-placeholder="请选择">
+                            </select>
+                        </div>
+                        <span class="am-form-caret"></span>
+                    </div>
+
+                    <div class="am-form-group">
+                        <div>
+                            <button id="edit-form-submit-button" type="" class="am-btn am-btn-success">提交</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--修改应用组错误的Modal-->
+    <div class="am-modal am-modal-alert" tabindex="-1" id="edit-error-modal">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">错误</div>
+            <div class="am-modal-bd">
+                编辑应用组失败！
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn">确定</span>
+            </div>
+        </div>
+    </div>
+{% endblock custom_modal %}
+
+{% block custom_script %}
+    <script src="{{ url_for('static', filename='js/amazeui.chosen.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/amazeui.chosen.css') }}"/>
+
+    <script>
+        (function () {
+            // 初始化下拉框数据。
+            initSelectData();
+
+            // 初始化「小云」表格。
+            var table = $('#littlecloud-table').DataTable({
+                responsive: true,
+                "lengthChange": false,
+                "order": [[0, 'asc']],
+                "ajax": "{{ url_for('connect.get_all_littleclouds') }}",
+                "oLanguage": {
+                    "sLengthMenu": "每页显示 _MENU_ 条记录",
+                    "sZeroRecords": "没有检索到数据",
+                    "sSearch": "",
+                },
+                "columns": [
+                    {"data": "name"},
+                    {"data": "is_connected"},
+                    {"data": "appgroups"},
+                    {"data": "operation"},
+                ],
+                "createdRow": function (row, data, index) {
+                    var isConnectible = data["is_connectible"];
+                    if (isConnectible === false) {
+                        table.rows($(row)).remove();
+                        return;
+                    }
+
+                    var isConnected = data["is_connected"];
+                    if (isConnected) {
+                        $('td', row).eq(1).html("<span class='am-badge am-badge-success am-radius' style='margin-right:10px'>已接入</span>");
+                    } else {
+                        $('td', row).eq(1).html("<span class='am-badge am-badge-danger am-radius' style='margin-right:10px'>未接入</span>");
+                    }
+
+                    var groups = data["appgroups"];
+                    var groupsTemplate = "";
+                    for (var i = 0; i < groups.length; i++) {
+                        var group = groups[i];
+                        groupsTemplate += "<span class='am-badge am-badge-warning am-radius' style='margin-right:10px'>{0}</span>".format(group.name);
+                    }
+                    $('td', row).eq(2).html(groupsTemplate);
+                },
+                "columnDefs": [{
+                    "targets": "nosort",
+                    "orderable": false,
+                }, {
+                    "targets": "operation",
+                    "data": null,
+                    "defaultContent": '<button class="am-btn am-btn-primary am-btn-xs am-radius edit-appgroup-button" style="margin-right:10px">修改应用组</button>'
+                }],
+                "drawCallback": function () {
+                    // 往「修改应用组」注册点击事件：渲染出修改Modal。
+                    $(".edit-appgroup-button").on('click', function () {
+                        var tr = this.closest('tr');
+                        var row = table.row(tr);
+                        var rowData = row.data();
+                        var groups = rowData.appgroups;
+                        var groupsList = [];
+                        for (var i = 0; i < groups.length; i++) {
+                            groupsList.push(groups[i].id);
+                        }
+
+                        // 清空表单数据。
+                        $("#edit-appgroup-form").get(0).reset();
+                        $("#edit-form-appgroups").trigger('chosen:updated');
+
+                        // 覆盖表单数据。
+                        $("#edit-form-id").val(rowData.id);
+                        $("#edit-form-name").val(rowData.name);
+                        $("#edit-form-appgroups").val(groupsList).trigger('chosen:updated');
+
+                        // 渲染修改modal。
+                        $('#edit-appgroup-modal').modal();
+
+                        // 激活表单验证样式（渲染出modal后激活才有效果）。
+                        var isFormValid = $('#edit-appgroup-form').validator('isFormValid');
+                    });
+                },
+            });
+
+            // 「修改应用组表单」的提交方法：采用异步提交的方式。
+            $('#edit-appgroup-form').submit(function (e) {
+                var id = $("#edit-form-id").val();
+                var url = "{{ url_for('connect.index') }}" + "api/littlecloud/" + id.toString() + "/appgroups";
+
+                $(this).ajaxSubmit({
+                    // 提交前的回调函数：用于判断表单验证是否通过。
+                    beforeSubmit: function (formData, jqForm, options) {
+                        var formValidity = $('#edit-appgroup-form').validator('isFormValid');
+                        console.log(formValidity);
+                        if (formValidity) {
+                            $('#edit-appgroup-modal').modal('close');
+                            return true;
+                        }
+                        return false;
+                    },
+                    // 提交后的回调函数
+                    success: function (responseObject, statusText) {
+                        if (responseObject['result']) {
+                            $('#littlecloud-table').DataTable().ajax.reload();
+                        } else {
+                            $("#edit-error-modal").modal({closeViaDimmer: 0});
+                        }
+                    },
+                    url: url,
+                    type: "put",
+                    dataType: "json"
+                });
+
+                return false;
+            });
+
+        }());
+
+        // 初始化下拉框数据。
+        function initSelectData() {
+            initApps();
+        }
+
+        // 初始化所含应用组下拉框。
+        function initApps() {
+            $.ajax({
+                url: 'api/appgroup',
+                type: 'GET',
+                dataType: 'json',
+                success: function (res, textStatus, jqXHR) {
+                    if (res["result"]) {
+                        var data = res["data"];
+                        var $editSelected = $("#edit-form-appgroups");
+                        for (var i = 0; i < data.length; i++) {
+                            var group = data[i];
+                            $editSelected.append('<option value="' + group.id + '">' + group.name + '</option>');
+                        }
+                        $editSelected.chosen({width: "100%"});
+                    }
+                },
+            });
+        }
+    </script>
+{% endblock custom_script %}
+

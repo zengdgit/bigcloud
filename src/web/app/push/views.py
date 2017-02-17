@@ -6,10 +6,13 @@
 import os
 from flask import Flask, request, jsonify, render_template, url_for, redirect
 from . import push
-from ..models import Package, Application, OS, Language, CPU, FirstClassification, SecondaryClassification, Function
+from ..models import Package, Application, OS, Language, CPU, FirstClassification, SecondaryClassification, Function, \
+    AppGroup
 from ..utils import checksum
 from flask_login import login_required, current_user
-from .forms import UploadForm, ApplicationForm
+
+from .forms import UploadForm, ApplicationForm,FunctionForm,AppGroupForm
+
 from .. import upload, logger
 
 
@@ -25,10 +28,10 @@ def littlecloud():
     return render_template('push/push_littlecloud.html')
 
 
-@push.route('/usergroup')
+@push.route('/appgroup')
 @login_required
-def usergroup():
-    return render_template('push/push_usergroup.html')
+def appgroup():
+    return render_template('push/push_appgroup.html')
 
 
 @push.route('/application')
@@ -47,6 +50,98 @@ def package():
 @login_required
 def function():
     return render_template('push/push_function.html')
+#################
+# function
+#################
+@push.route('/api/function', methods=['GET'])
+@login_required
+def get_all_functions():
+    '''
+    【API】得到所有功能的数据。
+    :return:
+    '''
+    function = Function.query.all()
+    dic = []
+
+    for i in function:
+        secondary_classification=SecondaryClassification.query.filter_by(id=i.secondary_classification_id).first()
+        first_classification=FirstClassification.query.filter_by(id=SecondaryClassification.first_classification_id).first()
+        item = {
+            "id": i.id,
+            "name": i.name,
+            "first_classification":first_classification.name,
+            "secondary_classification":secondary_classification.name,
+        }
+        dic.append(item)
+    logger.info("{0} - Get all function".format(current_user.name))
+    res = {"result": True, "data": dic, "message": u"Get all function successfully!"}
+
+    return jsonify(res)
+
+@push.route('/api/function', methods=['POST'])
+@login_required
+def create_function():
+    form = FunctionForm()
+
+    if form.validate_on_submit():
+        # id=form.id.data
+        new_function = Function(
+            id=int(form.id.data),
+            name=form.name.data,
+            secondary_classification_id=form.secondary_classification_id.data
+        )
+        new_function.save()
+
+        # logger.info("{0} - Add {1} function with id {2}".format(current_user.name))
+        return jsonify({"result": True, "data": None, "message": u"Add new function successfully"})
+    error = form.errors
+    logger.error("{0} - Fail to add function because {1}".format(current_user.name, error))
+    return jsonify({"result": False, "data": None, "message": error})
+
+@push.route('/api/function/<int:id>', methods=['DELETE'])
+def delete_Function_by_id(id):
+    '''
+    【API】根据 id 删除功能。
+    :param id: 应用 ID
+    :return:
+    '''
+    function = Function.query.get(int(id))
+    if function:
+        name = function.name
+        function.delete()
+        logger.info("{0} - Delete {1} application with id {2}".format(current_user.name, name, id))
+        return jsonify({"result": True, "data": None, "message": "Delete the application successfully"})
+    res_message = u"Failed! The application with id %s is not excisted" % id
+    logger.error("{0} - {1}".format(current_user.name, res_message))
+    return jsonify({"result": False, "data": None, "message": res_message})
+
+@push.route('/api/function/<int:id>', methods=['PUT'])
+@login_required
+def update_function_by_id(id):
+    '''
+    【API】根据 id 更新功能。
+    :param id: 应用 ID
+    :return:
+    '''
+    form = FunctionForm()
+    if form.validate_on_submit():
+        function = Function.query.get(int(id))
+        if function:
+            function.id=form.id.data
+            function.name = form.name.data
+            function.secondary_classification_id=form.secondary_classification_id.data
+            function.save()
+            logger.info(
+                "{0} - Update {1} application with id {2}".format(current_user.name, function.name, function.id))
+            return jsonify({"result": True, "data": None, "message": u"Edit new application successfully"})
+        res_message = u"Failed! The application with id %s is not excisted" % id
+        logger.error("{0} - {1}".format(current_user.name, res_message))
+        return jsonify({"result": False, "data": None, "message": res_message})
+
+    error = form.errors
+    logger.error("{0} - Fail to update application because {1}".format(current_user.name, error))
+    return jsonify({"result": False, "data": None, "message": error})
+
 
 
 #################
@@ -73,7 +168,6 @@ def get_all_packages():
     # logger.info("{0} - Get all packages".format(current_user.name))
     res = {"result": True, "data": data, "message": u"Get all packages successfully!"}
     return jsonify(res)
-
 
 @push.route('/api/package', methods=['POST'])
 @login_required
@@ -332,5 +426,116 @@ def delete_Application_by_id(id):
         logger.info("{0} - Delete {1} application with id {2}".format(current_user.name, name, id))
         return jsonify({"result": True, "data": None, "message": "Delete the application successfully"})
     res_message = u"Failed! The application with id %s is not excisted" % id
+    logger.error("{0} - {1}".format(current_user.name, res_message))
+    return jsonify({"result": False, "data": None, "message": res_message})
+
+
+#################
+# appgroup
+#################
+@push.route('/api/appgroup', methods=['GET'])
+@login_required
+def get_all_appgroups():
+    '''
+    【API】得到所有应用组的数据。
+    :return:
+    '''
+    groups = AppGroup.query.all()
+    data = []
+    for i in groups:
+        apps = []
+        for a in i.applications:
+            apps.append({"id": a.id, "name": a.name})
+        item = {
+            "id": i.id,
+            "name": i.name,
+            "description": i.description,
+            "apps": apps,
+        }
+        data.append(item)
+    res = {"result": True, "data": data, "message": u"Get all applications successfully!"}
+    return jsonify(res)
+
+
+@push.route('/api/appgroup', methods=['POST'])
+@login_required
+def add_appgroup():
+    '''
+    【API】添加应用组。
+    :return:
+    '''
+    form = AppGroupForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        apps_id = form.apps.raw_data
+        apps = []
+        for id in apps_id:
+            application = Application.query.get(int(id))
+            if application:
+                apps.append(application)
+        new_appgroup = AppGroup(
+            name=form.name.data,
+            description=form.description.data,
+            applications=apps,
+        )
+        new_appgroup.save()
+        logger.info("{0} - Add {1} appgroup with id {2}".format(current_user.name, name, new_appgroup.id))
+        return jsonify({"result": True, "data": None, "message": "Add the appgroup successfully"})
+    err = form.errors
+    logger.error("{0} - Fail to add appgroup because {1}".format(current_user.name, err))
+    res = {"result": True, "data": None, "message": err}
+    return jsonify(res)
+
+
+@push.route('/api/appgroup/<int:id>', methods=['PUT'])
+@login_required
+def update_appgroup_by_id(id):
+    '''
+    【API】根据 id 更新应用组。
+    :param id: 应用组 ID
+    :return:
+    '''
+    form = AppGroupForm()
+    if form.validate_on_submit():
+        group = AppGroup.query.get(int(id))
+        if group:
+            apps_id = form.apps.raw_data
+            apps = []
+            for app_id in apps_id:
+                application = Application.query.get(int(app_id))
+                if application:
+                    apps.append(application)
+
+            group.name = form.name.data
+            group.description = form.description.data
+            group.applications = apps
+            group.save()
+            logger.info(
+                "{0} - Update {1} appgroup with id {2}".format(current_user.name, group.name, group.id))
+            return jsonify({"result": True, "data": None, "message": u"Edit new appgroup successfully"})
+        res_message = u"Failed! The appgroup with id %s is not excisted" % id
+        logger.error("{0} - {1}".format(current_user.name, res_message))
+        return jsonify({"result": False, "data": None, "message": res_message})
+
+    error = form.errors
+    logger.error("{0} - Fail to update appgroup because {1}".format(current_user.name, error))
+    return jsonify({"result": False, "data": None, "message": error})
+
+
+@push.route('/api/appgroup/<int:id>', methods=['DELETE'])
+@login_required
+def delete_AppGroup_by_id(id):
+    '''
+    【API】根据 id 删除应用组。
+    :param id: 应用组 ID
+    :return:
+    '''
+    group = AppGroup.query.get(int(id))
+    if group:
+        name = group.name
+        group.delete()
+        logger.info("{0} - Delete {1} appgroup with id {2}".format(current_user.name, name, id))
+        return jsonify({"result": True, "data": None, "message": "Delete the appgroup successfully"})
+    res_message = u"Failed! The appgroup with id %s is not excisted" % id
     logger.error("{0} - {1}".format(current_user.name, res_message))
     return jsonify({"result": False, "data": None, "message": res_message})
