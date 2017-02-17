@@ -6,7 +6,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, IntegerField
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from wtforms.validators import DataRequired, Length
+from wtforms.validators import DataRequired, Length,Required
 from .. import upload
 
 
@@ -28,6 +28,15 @@ class ApplicationForm(FlaskForm):
     package_id = StringField(id='package_id', validators=[DataRequired(), Length(1, 255)])
     install_command = StringField(id='install_command', validators=[DataRequired(), Length(1, 2083)])
     version = StringField(id='version', validators=[DataRequired(), Length(1, 255)])
+
+
+
+class FunctionForm(FlaskForm):
+    id = StringField(id='id', validators=[DataRequired()])
+    name = StringField(id='name', validators=[DataRequired(), Length(1, 50)])
+    secondary_classification_id = StringField(id='secondary_classification_id',
+                                              validators=[DataRequired(), Length(1, 10)])
+
 
 
 class AppGroupForm(FlaskForm):
