@@ -66,17 +66,20 @@ def create_app(config_name):
     from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
-    from .home import home as home_blueprint
-    app.register_blueprint(home_blueprint, url_prefix='/home')
-
     from .connect import connect as connect_blueprint
     app.register_blueprint(connect_blueprint, url_prefix='/connect')
+
+    from .home import home as home_blueprint
+    app.register_blueprint(home_blueprint, url_prefix='/home')
 
     from .monitor import monitor as monitor_blueprint
     app.register_blueprint(monitor_blueprint, url_prefix='/monitor')
 
     from .push import push as push_blueprint
     app.register_blueprint(push_blueprint, url_prefix='/push')
+
+    from .remote import remote as remote_blueprint
+    app.register_blueprint(remote_blueprint, url_prefix='/remote')
 
     from .user import user as user_blueprint
     app.register_blueprint(user_blueprint, url_prefix='/user')
