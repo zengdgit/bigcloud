@@ -7,6 +7,7 @@ import json
 
 from .. import logger
 from ..models import LittleCloud
+from ..common.singleton import Singleton
 
 
 class ResponseKey:
@@ -32,10 +33,10 @@ class ResponseResult:
 class ReceiveMessage(object):
     # for little cloud post data
     CONNECT = 'connect'
-    MONITOR = 'monitor'
-    VMMONITOR = 'vmmonitor'
-    EVENT = 'event'
-    TEMPLATE_LIST = 'template_list'
+    # MONITOR = 'monitor'
+    # VMMONITOR = 'vmmonitor'
+    # EVENT = 'event'
+    # TEMPLATE_LIST = 'template_list'
 
     # for little cloud get data
     GET_PUSH_TASK = 'get_push_task'
@@ -47,10 +48,10 @@ class ReceiveMessage(object):
     def support_message_type(cls, message):
         support = [
             ReceiveMessage.CONNECT,
-            ReceiveMessage.MONITOR,
-            ReceiveMessage.VMMONITOR,
-            ReceiveMessage.EVENT,
-            ReceiveMessage.TEMPLATE_LIST,
+            # ReceiveMessage.MONITOR,
+            # ReceiveMessage.VMMONITOR,
+            # ReceiveMessage.EVENT,
+            # ReceiveMessage.TEMPLATE_LIST,
             ReceiveMessage.GET_PUSH_TASK,
             ReceiveMessage.APPLICATION_META,
             ReceiveMessage.USER_GROUP_INFO,
@@ -110,3 +111,27 @@ class ReceiveMessageBroker(object):
     @classmethod
     def _classname(cls, message):
         return message.title().replace('_', '')
+
+
+class BaseProcessor(Singleton):
+    @classmethod
+    def execute(cls, param, cloud_id):
+        return cls.process(param, cloud_id)
+
+    @classmethod
+    def process(cls, param, cloud_id):
+        pass
+
+
+class ConnectProcessor(BaseProcessor):
+    @classmethod
+    def process(cls, param, cloud_id):
+        try:
+            little_cloud = LittleCloud.objects.get(id=cloud_id)
+            if not little_cloud.is_connected:
+                little_cloud.is_connected = True
+                little_cloud.save()
+        except Exception as e:
+            logger.error('ConnectProcessor error')
+            return ResponseResult.FAIL
+        return ResponseResult.SUCCESS
