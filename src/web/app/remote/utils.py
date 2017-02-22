@@ -87,15 +87,15 @@ class ReceiveMessageBroker(object):
 
     @classmethod
     def _get_message_data(cls, request):
-        # return json.loads(request.body.decode()).get('data')
-        return json.loads(request.body.decode())  # TODO 不确定在Flask下是否可行，需要测试！！！
+        return json.loads(request.data.decode())
 
     @classmethod
     def _authentication(cls, data):
         try:
             token = data['token']
             cloud_name = token
-            little_cloud = LittleCloud.objects.get(name=cloud_name, is_connectible=True)
+            little_cloud = LittleCloud.query.filter(LittleCloud.name == cloud_name,
+                                                    LittleCloud.is_connectible == True).first()
             if not little_cloud:
                 return None
             else:
@@ -127,7 +127,7 @@ class ConnectProcessor(BaseProcessor):
     @classmethod
     def process(cls, param, cloud_id):
         try:
-            little_cloud = LittleCloud.objects.get(id=cloud_id)
+            little_cloud = LittleCloud.query.get(int(cloud_id))
             if not little_cloud.is_connected:
                 little_cloud.is_connected = True
                 little_cloud.save()

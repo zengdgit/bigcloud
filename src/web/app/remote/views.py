@@ -11,7 +11,6 @@ from .. import logger
 
 
 @remote.route('/connect', methods=['POST'])
-@login_required
 def connect():
     '''
     【API】连接大云。
