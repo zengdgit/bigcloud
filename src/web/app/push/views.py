@@ -11,7 +11,7 @@ from ..models import Package, Application, OS, Language, CPU, FirstClassificatio
 from ..utils import checksum
 from flask_login import login_required, current_user
 
-from .forms import UploadForm, ApplicationForm,FunctionForm,AppGroupForm
+from .forms import UploadForm, ApplicationForm, FunctionForm, AppGroupForm
 
 from .. import upload, logger
 
@@ -50,6 +50,8 @@ def package():
 @login_required
 def function():
     return render_template('push/push_function.html')
+
+
 #################
 # function
 #################
@@ -64,19 +66,21 @@ def get_all_functions():
     dic = []
 
     for i in function:
-        secondary_classification=SecondaryClassification.query.filter_by(id=i.secondary_classification_id).first()
-        first_classification=FirstClassification.query.filter_by(id=SecondaryClassification.first_classification_id).first()
+        secondary_classification = SecondaryClassification.query.filter_by(id=i.secondary_classification_id).first()
+        first_classification = FirstClassification.query.filter_by(
+            id=SecondaryClassification.first_classification_id).first()
         item = {
             "id": i.id,
             "name": i.name,
-            "first_classification":first_classification.name,
-            "secondary_classification":secondary_classification.name,
+            "first_classification": first_classification.name,
+            "secondary_classification": secondary_classification.name,
         }
         dic.append(item)
     logger.info("{0} - Get all function".format(current_user.name))
     res = {"result": True, "data": dic, "message": u"Get all function successfully!"}
 
     return jsonify(res)
+
 
 @push.route('/api/function', methods=['POST'])
 @login_required
@@ -98,6 +102,7 @@ def create_function():
     logger.error("{0} - Fail to add function because {1}".format(current_user.name, error))
     return jsonify({"result": False, "data": None, "message": error})
 
+
 @push.route('/api/function/<int:id>', methods=['DELETE'])
 def delete_Function_by_id(id):
     '''
@@ -110,10 +115,11 @@ def delete_Function_by_id(id):
         name = function.name
         function.delete()
         logger.info("{0} - Delete {1} application with id {2}".format(current_user.name, name, id))
-        return jsonify({"result": True, "data": None, "message": "Delete the application successfully"})
-    res_message = u"Failed! The application with id %s is not excisted" % id
+        return jsonify({"result": True, "data": None, "message": "Delete the function successfully"})
+    res_message = u"Failed! The function with id %s is not excisted" % id
     logger.error("{0} - {1}".format(current_user.name, res_message))
     return jsonify({"result": False, "data": None, "message": res_message})
+
 
 @push.route('/api/function/<int:id>', methods=['PUT'])
 @login_required
@@ -127,21 +133,20 @@ def update_function_by_id(id):
     if form.validate_on_submit():
         function = Function.query.get(int(id))
         if function:
-            function.id=form.id.data
+            function.id = form.id.data
             function.name = form.name.data
-            function.secondary_classification_id=form.secondary_classification_id.data
+            function.secondary_classification_id = form.secondary_classification_id.data
             function.save()
             logger.info(
-                "{0} - Update {1} application with id {2}".format(current_user.name, function.name, function.id))
-            return jsonify({"result": True, "data": None, "message": u"Edit new application successfully"})
-        res_message = u"Failed! The application with id %s is not excisted" % id
+                "{0} - Update {1} function with id {2}".format(current_user.name, function.name, function.id))
+            return jsonify({"result": True, "data": None, "message": u"Edit new function successfully"})
+        res_message = u"Failed! The function with id %s is not excisted" % id
         logger.error("{0} - {1}".format(current_user.name, res_message))
         return jsonify({"result": False, "data": None, "message": res_message})
 
     error = form.errors
-    logger.error("{0} - Fail to update application because {1}".format(current_user.name, error))
+    logger.error("{0} - Fail to update function because {1}".format(current_user.name, error))
     return jsonify({"result": False, "data": None, "message": error})
-
 
 
 #################
@@ -168,6 +173,7 @@ def get_all_packages():
     # logger.info("{0} - Get all packages".format(current_user.name))
     res = {"result": True, "data": data, "message": u"Get all packages successfully!"}
     return jsonify(res)
+
 
 @push.route('/api/package', methods=['POST'])
 @login_required

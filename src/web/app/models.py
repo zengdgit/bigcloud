@@ -273,6 +273,8 @@ class AppGroup(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column('应用组名', db.Unicode(255), unique=True)
     description = db.Column('描述', db.Unicode(255), unique=True)
+    created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
+    modified_time = db.Column('修改时间', db.DateTime, onupdate=datetime.datetime.now)
 
     applications = db.relationship('Application', secondary=AppGroup_Application, backref=db.backref('AppGroup'))
 
