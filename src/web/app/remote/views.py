@@ -6,7 +6,7 @@
 from flask import jsonify, render_template, request
 from flask_login import login_required, current_user
 from . import remote
-from .utils import ReceiveMessageBroker
+from .task import TaskBroker
 from .. import logger
 
 
@@ -16,5 +16,5 @@ def connect():
     【API】连接大云。
     :return:
     '''
-    result = ReceiveMessageBroker.dispatch(request)
+    result = TaskBroker.dispatch(request)
     return jsonify(result)

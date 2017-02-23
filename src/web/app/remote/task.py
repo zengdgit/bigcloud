@@ -8,6 +8,7 @@ import json
 from .. import logger
 from ..models import LittleCloud
 from ..common.singleton import Singleton
+from .push_message import PUSH_MESSAGE_MANAGER
 
 
 class ResponseKey:
@@ -60,7 +61,7 @@ class ReceiveMessage(object):
         return message in support
 
 
-class ReceiveMessageBroker(object):
+class TaskBroker(object):
     """
     message broker for message processing
     """
@@ -77,7 +78,7 @@ class ReceiveMessageBroker(object):
 
             message_type, message = cls._get_message(data)
             if ReceiveMessage.support_message_type(message_type):
-                return eval(cls._classname(message_type) + 'Processor.execute')(param=message, cloud_id=littlecloud_id)
+                return eval(cls._classname(message_type) + 'Task.execute')(param=message, cloud_id=littlecloud_id)
             else:
                 logger.error('Not support little cloud message %s.', message_type)
                 return ResponseResult.FAIL
@@ -113,7 +114,7 @@ class ReceiveMessageBroker(object):
         return message.title().replace('_', '')
 
 
-class BaseProcessor(Singleton):
+class BaseTask(Singleton):
     @classmethod
     def execute(cls, param, cloud_id):
         return cls.process(param, cloud_id)
@@ -123,7 +124,7 @@ class BaseProcessor(Singleton):
         pass
 
 
-class ConnectProcessor(BaseProcessor):
+class ConnectTask(BaseTask):
     @classmethod
     def process(cls, param, cloud_id):
         try:
@@ -135,3 +136,17 @@ class ConnectProcessor(BaseProcessor):
             logger.error('ConnectProcessor error')
             return ResponseResult.FAIL
         return ResponseResult.SUCCESS
+
+
+class GetPushTaskTask(BaseTask):
+    @classmethod
+    def process(cls, param, cloud_id):
+        try:
+            messages = PUSH_MESSAGE_MANAGER.pop_all_message(cloud_id)
+            if messages:
+                pass
+            else:
+                pass
+            return messages
+        except Exception as e:
+            logger.error('Get message queue error for little cloud %s' % cloud_id)

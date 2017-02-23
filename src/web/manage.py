@@ -3,6 +3,35 @@
 #
 # 2016/12/22 Chen Weijian : Init
 
+import os
+import sys
+import re
+
+# Fix path problem
+basedir = os.path.abspath(os.path.dirname(__file__))
+os.chdir(basedir)
+sys.path.append(basedir)
+sys.path.append(os.path.join(basedir, '..'))
+
+# Import environment variables
+env_file_path = os.path.join(basedir, '.env')
+if os.path.exists(env_file_path):
+    print('Importing environment from .env...')
+    env = {}
+    for line in open(env_file_path):
+        line = line.strip()
+        # Skip comments
+        if re.match('^\s*#', line):
+            continue
+        try:
+            idx = line.index('=')
+        except:
+            continue
+        if idx + 1 == len(line):
+            continue
+        env[line[:idx]] = line[idx + 1:]
+    os.environ.update(env)
+
 from app import app, db
 from flask import redirect, url_for
 from flask_migrate import Migrate, MigrateCommand
