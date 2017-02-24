@@ -337,7 +337,7 @@ class LittleCloud(db.Model):
 #################
 # 初始化数据
 #################
-def init_db():
+def insert_default_db():
     # 初始化用户
     if len(User.query.all()) == 0:
         u = User(name=u"admin123", email=u"admin@test.com", password=u"admin123")

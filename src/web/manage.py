@@ -60,8 +60,8 @@ def index():
 @manager.command
 def deploy():
     """Run deployment tasks."""
-    from app.models import init_db
-    init_db()
+    from app.models import insert_default_db
+    insert_default_db()
 
 
 @manager.command
