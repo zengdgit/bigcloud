@@ -11,26 +11,6 @@ from ..common.singleton import Singleton
 from .message import MessageType, ReceiveMessage, ResponseCode, ResponseMessage
 
 
-# class ResponseKey:
-#     RESULT = 'result'
-#     MESSAGE = 'msg'
-#
-#
-# class ResponseCode:
-#     SUCCESS = 'success'
-#     FAIL = 'fail'
-#
-#
-# class ResponseResult:
-#     FAIL = {
-#         ResponseKey.RESULT: ResponseCode.FAIL
-#     }
-#
-#     SUCCESS = {
-#         ResponseKey.RESULT: ResponseCode.SUCCESS
-#     }
-
-
 class TaskBroker(object):
     """
     message broker for message processing
@@ -109,7 +89,7 @@ class ConnectTask(BaseTask):
         return ResponseMessage.create(message_type=MessageType.CONNECT, result=ResponseCode.SUCCESS)
 
 
-class SyncAppGroupInfoTask(BaseTask):
+class SyncAppGroupTask(BaseTask):
     @classmethod
     def process(cls, param, cloud_id):
         try:
@@ -119,22 +99,35 @@ class SyncAppGroupInfoTask(BaseTask):
                 return ResponseMessage.create(message_type=MessageType.SYNC_APP_GROUP, result=ResponseCode.FAIL)
 
             data = []
+            all_groups = little_cloud.appgroups
+            for group in all_groups:
+                all_applications = group.applications
+                all_applications_info = []
+                for app in all_applications:
+                    app_info = {
+                        'name': app.name,
+                        'version': app.version,
+                        'function': app.function.name if app.function else None,
+                        'os': app.os.name if app.os else None,
+                        'cpu': app.cpu.name if app.cpu else None,
+                        'language': app.language.name if app.language else None,
+                        'install_command': app.install_command,
+                        'package': {
+                            'filename': app.package.filename,
+                            'size': app.package.size,
+                            'md5': app.package.md5,
+                        } if app.package else None,
+                    }
+                    all_applications_info.append(app_info)
+                group_info = {
+                    'name': group.name,
+                    'description': group.description,
+                    'applications': all_applications_info,
+                }
+                data.append(group_info)
         except Exception as e:
             logger.error('ConnectProcessor error')
             return ResponseMessage.create(message_type=MessageType.SYNC_APP_GROUP, result=ResponseCode.FAIL)
 
-        return ResponseMessage.create(message_type=MessageType.CONNECT, message=data, result=ResponseCode.SUCCESS)
-
-# class GetPushTaskTask(BaseTask):
-#     # !!!已放弃使用这个推送任务。
-#     @classmethod
-#     def process(cls, param, cloud_id):
-#         try:
-#             messages = PUSH_MESSAGE_MANAGER.pop_all_message(cloud_id)
-#             if messages:
-#                 pass
-#             else:
-#                 pass
-#             return messages
-#         except Exception as e:
-#             logger.error('Get message queue error for little cloud %s' % cloud_id)
+        return ResponseMessage.create(message_type=MessageType.SYNC_APP_GROUP, message=data,
+                                      result=ResponseCode.SUCCESS)
