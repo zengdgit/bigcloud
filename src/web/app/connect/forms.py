@@ -19,4 +19,4 @@ class LittleCloudForm(FlaskForm):
 
 
 class UpdateAppGroupsForm(FlaskForm):
-    appgroups = StringField(id='appgroups', validators=[DataRequired()])
+    appgroups = StringField(id='appgroups', validators=[])

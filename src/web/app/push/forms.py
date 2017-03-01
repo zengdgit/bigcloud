@@ -42,4 +42,4 @@ class FunctionForm(FlaskForm):
 class AppGroupForm(FlaskForm):
     name = StringField(id='name', validators=[DataRequired(), Length(1, 50)])
     description = StringField(id='description', validators=[DataRequired(), Length(1, 50)])
-    apps = StringField(id='apps', validators=[DataRequired()])
+    apps = StringField(id='apps', validators=[])

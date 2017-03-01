@@ -212,7 +212,7 @@ def update_appgroups_of_littlecloud(id):
             cloud.appgroups = groups
             cloud.save()
             logger.info(
-                "{0} - Update {1} littlecloud with id {2}".format(current_user.name, group.name, cloud.id))
+                "{0} - Update {1} littlecloud with id {2}".format(current_user.name, cloud.name, cloud.id))
             return jsonify({"result": True, "data": None, "message": u"Update appgroups of littlecloud successfully"})
         res_message = u"Failed! The littlecloud with id %s is not excisted" % id
         logger.error("{0} - {1}".format(current_user.name, res_message))
