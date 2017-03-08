@@ -131,3 +131,9 @@ class SyncAppGroupTask(BaseTask):
 
         return ResponseMessage.create(message_type=MessageType.SYNC_APP_GROUP, message=data,
                                       result=ResponseCode.SUCCESS)
+
+
+class SyncSettingTask(BaseTask):
+    @classmethod
+    def process(cls, param, cloud_id):
+        pass

@@ -10,6 +10,7 @@ class MessageType(object):
     NULL = 'null'
     CONNECT = 'connect'
     SYNC_APP_GROUP = 'sync_app_group'
+    SYNC_SETTING = 'sync_setting'
 
 
 class ReceiveMessage(object):

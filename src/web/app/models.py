@@ -507,3 +507,38 @@ class LittleCloud(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
+
+#################
+# setting_template
+#################
+class TemplateMeta(db.Model):
+    __tablename__ = 'template_meta'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column('设置模板名称', db.Unicode(255), unique=True)
+    created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
+    modified_time = db.Column('修改时间', db.DateTime, onupdate=datetime.datetime.now)
+
+
+class PeriodTemplate(db.Model):
+    __tablename__ = 'period_templates'
+
+    id = db.Column(db.Integer, primary_key=True)
+    meta_id = db.Column(db.Integer, db.ForeignKey('template_meta.id'))
+    start_time = db.Column(db.Time, nullable=False)
+    end_time = db.Column(db.Time, nullable=False)
+    created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
+    modified_time = db.Column('修改时间', db.DateTime, onupdate=datetime.datetime.now)
+
+
+class FlavorTemplate(db.Model):
+    __tablename__ = 'flavor_templates'
+
+    id = db.Column(db.Integer, primary_key=True)
+    meta_id = db.Column(db.Integer, db.ForeignKey('template_meta.id'))
+    ramnum = db.Column(db.Integer)
+    cpunum = db.Column(db.Integer)
+    disknum = db.Column(db.Integer)
+    created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
+    modified_time = db.Column('修改时间', db.DateTime, onupdate=datetime.datetime.now)
