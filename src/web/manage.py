@@ -60,13 +60,18 @@ def index():
 @manager.command
 def deploy():
     """Run deployment tasks."""
-    from app.models import User, Function, Language, CPU, OS
-
+    from app.models import User, Function, Language, CPU, OS, TemplateMeta, PeriodTemplate, FlavorTemplate, LittleCloud
+    """
     User.insert_default_users()
     Function.insert_default_functions()
     Language.insert_default_languages()
     CPU.insert_default_cpus()
     OS.insert_default_oses()
+    """
+
+    TemplateMeta.test_init()
+    PeriodTemplate.insert_default_templates()
+    FlavorTemplate.insert_default_templates()
 
 
 @manager.command

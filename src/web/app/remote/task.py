@@ -134,6 +134,22 @@ class SyncAppGroupTask(BaseTask):
 
 
 class SyncSettingTask(BaseTask):
+    from .utils import sync_timetable, sync_flavor
+    sync_handler = {'timetable':sync_timetable, 'flavor':sync_flavor}
     @classmethod
     def process(cls, param, cloud_id):
-        pass
+        try:
+            little_cloud = LittleCloud.query.get(int(cloud_id))
+            # 检查小云是否已接入
+            if not little_cloud.is_connected:
+                return ResponseMessage.create(message_type=MessageType.SYNC_SETTING, result=ResponseCode.FAIL)
+            logger.info(param['latest_setting'])
+            data = cls.sync_handler[param['type']](param['latest_setting'])
+            logger.info(data)
+            return ResponseMessage.create(message_type=MessageType.SYNC_SETTING, message=data, result=ResponseCode.SUCCESS)
+        except Exception as e:
+            logger.error(param)
+            import traceback
+            traceback.print_exc()
+            logger.error('sync %s templates error' % param['type'])
+            return ResponseMessage.create(message_type=MessageType.SYNC_SETTING, result=ResponseCode.FAIL)

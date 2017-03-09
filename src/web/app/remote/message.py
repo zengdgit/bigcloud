@@ -17,6 +17,7 @@ class ReceiveMessage(object):
     SUPPORT = [
         MessageType.CONNECT,
         MessageType.SYNC_APP_GROUP,
+        MessageType.SYNC_SETTING,
     ]
 
     @classmethod

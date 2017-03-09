@@ -517,8 +517,25 @@ class TemplateMeta(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column('设置模板名称', db.Unicode(255), unique=True)
+    type = db.Column('模板类型', db.Unicode(128))
     created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
-    modified_time = db.Column('修改时间', db.DateTime, onupdate=datetime.datetime.now)
+    modified_time = db.Column('修改时间', db.DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
+
+    @staticmethod
+    def test_init():
+        test_meta = {
+            'id': 1,
+            'b_id': 1,
+            'b_meta_name': 'testtime',
+            'type': 'timetable',
+        }
+        t = TemplateMeta.query.filter_by(id=1).first()
+        if t is None:
+            t = TemplateMeta(id=1, name='testtime', type='timetable')
+            db.session.add(t)
+            t = TemplateMeta(id=2, name='testflavor', type='flavor')
+            db.session.add(t)
+            db.session.commit()
 
 
 class PeriodTemplate(db.Model):
@@ -529,7 +546,22 @@ class PeriodTemplate(db.Model):
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time, nullable=False)
     created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
-    modified_time = db.Column('修改时间', db.DateTime, onupdate=datetime.datetime.now)
+    modified_time = db.Column('修改时间', db.DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
+
+    @staticmethod
+    def insert_default_templates():
+        PeriodTemplate.query.delete()
+        # insert default period, from 8:00 - 20:00
+        start_time = datetime.time(hour=8)
+        day_end_time = datetime.time(hour=20)
+        duration = datetime.timedelta(minutes=40)
+
+        while start_time < day_end_time:
+            end_time = (datetime.datetime.combine(datetime.date.today(), start_time) + duration).time()
+            period = PeriodTemplate(meta_id=1, start_time=start_time, end_time=end_time)
+            db.session.add(period)
+            start_time = end_time
+        db.session.commit()
 
 
 class FlavorTemplate(db.Model):
@@ -541,4 +573,11 @@ class FlavorTemplate(db.Model):
     cpunum = db.Column(db.Integer)
     disknum = db.Column(db.Integer)
     created_time = db.Column('创建时间', db.DateTime, default=datetime.datetime.now)
-    modified_time = db.Column('修改时间', db.DateTime, onupdate=datetime.datetime.now)
+    modified_time = db.Column('修改时间', db.DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
+
+    @staticmethod
+    def insert_default_templates():
+        FlavorTemplate.query.delete()
+        f = FlavorTemplate(meta_id=2, ramnum=2048, cpunum=4, disknum=50)
+        db.session.add(f)
+        db.session.commit()
