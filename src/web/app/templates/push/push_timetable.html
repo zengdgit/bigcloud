@@ -18,13 +18,10 @@
         <div class="widget am-cf">
             <div class="widget-head am-cf">
                 <div class="widget-title am-fl">时间表模板</div>
-                <select data-am-selected>
-                    <option value="a">Apple</option>
-                    <option value="b" selected>Banana</option>
-                    <option value="o">Orange</option>
-                    <option value="m">Mango</option>
-                    <option value="d" disabled>禁用鸟</option>
-                </select>
+                <div class="am-u-sm-10">
+                <select id="select_timetable" style="margin-left:25px;color:black;width:150px">
+                    <option value="">请选择..</option>
+                </select></div>
 
                 <div class="widget-function am-fr">
                     <button type="button" id="add-function-btn" class="am-btn am-btn-success am-btn-xs am-radius">
@@ -34,12 +31,13 @@
             </div>
             <div class="widget-body am-fr">
                 <div style="min-height: 400px;width: 98%;margin: auto" class="" id="tpl-echarts-A">
-                    <table width="100%" id="function-table"
+                    <table width="100%" id="time_table"
                            class="am-table am-table-compact am-table-striped tpl-table-black am-text-nowrap">
                         <thead>
                         <tr>
-                            <th>开始时间</th>
-                            <th>结束时间</th>
+                            <th class="id">节数</th>
+                            <th class="start">开始时间</th>
+                            <th class="end">结束时间</th>
                         </tr>
                         </thead>
                     </table>
@@ -48,3 +46,55 @@
         </div>
     </div>
 {% endblock content_body %}
+
+{% block custom_script %}
+    <script>
+        (function () {
+            // 初始化下拉框数据。
+            initSelectData();
+
+            $("#select_timetable").on('change', function () {
+                var value = $("#select_timetable").val();
+                if (value != "") {
+                    showTimetable(value.toString());
+                }
+            });
+        }());
+
+        function initSelectData() {
+            $.ajax({
+                url: 'api/timetable/list',
+                type: 'GET',
+                dataType: 'json',
+                success: function (res, textStatus, jqXHR) {
+                    console.log(JSON.stringify(res))
+                    if (res["result"]) {
+                        var data = res["data"];
+                        var $timetableSelected = $("#select_timetable")
+                        for (var i=0; i < data.length; i++) {
+                            $timetableSelected.append('<option value="' + data[i][0] + '">' + data[i][1] + '</option>');
+                        }
+                    }
+                },
+            });
+        }
+
+        function showTimetable(meta_id) {
+            $("#time_table").dataTable({
+                "language": {
+                    "url": "{{ url_for('static', filename='i18n/jquery.dataTables.json') }}"
+                },
+                "ajax": "api/timetable/" + meta_id,
+                "type":"GET",
+                "bSort": false,
+                "bPaginate": false,
+                "columns": [
+                        {"data": "id"},
+                        {"data": "start"},
+                        {"data": "end"},
+                ],
+            });
+        }
+
+    </script>
+{% endblock custom_script %}

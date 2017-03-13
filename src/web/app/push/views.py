@@ -555,16 +555,32 @@ def delete_AppGroup_by_id(id):
 #################
 # timetable
 #################
-@push.route('/api/timetable/<name>', methods=['GET'])
+@push.route('/api/timetable/list', methods=['GET'])
 @login_required
-def get_timetable_by_name(name):
-    meta_id = TemplateMeta.query.filter_by(type='timetable', name=name).first().id
+def get_timetable_list():
+    data = db.session.query(TemplateMeta.id, TemplateMeta.name).filter(TemplateMeta.type=='timetable').all()
+    res = {'result':True, 'data':data, 'message':'The name list of timetable templates'}
+    logger.info(res)
+    res = jsonify(res)
+    logger.info(res)
+    return res
+
+
+
+@push.route('/api/timetable/<int:meta_id>', methods=['GET'])
+@login_required
+def get_timetable_by_name(meta_id):
+    #meta_id = TemplateMeta.query.filter_by(type='timetable', id=name).first().id
     period_list = PeriodTemplate.query.filter_by(meta_id=meta_id).order_by(db.asc(PeriodTemplate.start_time)).all()
     data = []
+    num = 1;
     for period in period_list:
-        data.append((period.start_time.strftime('%H:%M'), period.end_time.strftime('%H:%M')))
+        str_num = '第'+str(num)+'节'
+        item = {'id':str_num, 'start':period.start_time.strftime('%H:%M'), 'end':period.end_time.strftime('%H:%M')}
+        data.append(item)
+        num = num + 1
 
-    res = {'result':True, 'data':data, 'message':'The data of timetable template %s' %name}
+    res = {'result':True, 'data':data, 'message':'The data of timetable template %s' %meta_id}
     return jsonify(res)
 
 
