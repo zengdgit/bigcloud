@@ -278,6 +278,13 @@
                             <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 新建应用功能分类
                         </a>
                     </li>
+
+                    <li class="sidebar-nav-link">
+                        <a href="{{ url_for('push.timetable') }}"
+                           class="{{ 'sub-active' if request.path.startswith('/push/timetable') else '' }}">
+                            <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 时间表模板
+                        </a>
+                    </li>
                 </ul>
             </li>
 

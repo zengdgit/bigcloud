@@ -7,11 +7,11 @@ import os
 from flask import Flask, request, jsonify, render_template, url_for, redirect
 from . import push
 from ..models import Package, Application, OS, Language, CPU, FirstClassification, SecondaryClassification, Function, \
-    AppGroup
+    AppGroup, TemplateMeta, PeriodTemplate, FlavorTemplate, db
 from ..utils import checksum
 from flask_login import login_required, current_user
 
-from .forms import UploadForm, ApplicationForm, FunctionForm, AppGroupForm
+from .forms import UploadForm, ApplicationForm, FunctionForm, AppGroupForm, TimetableForm
 
 from .. import upload, logger
 
@@ -51,6 +51,11 @@ def package():
 def function():
     return render_template('push/push_function.html')
 
+
+@push.route('/timetable')
+@login_required
+def timetable():
+    return render_template('push/push_timetable.html')
 
 #################
 # function
@@ -545,3 +550,28 @@ def delete_AppGroup_by_id(id):
     res_message = u"Failed! The appgroup with id %s is not excisted" % id
     logger.error("{0} - {1}".format(current_user.name, res_message))
     return jsonify({"result": False, "data": None, "message": res_message})
+
+
+#################
+# timetable
+#################
+@push.route('/api/timetable/<name>', methods=['GET'])
+@login_required
+def get_timetable_by_name(name):
+    meta_id = TemplateMeta.query.filter_by(type='timetable', name=name).first().id
+    period_list = PeriodTemplate.query.filter_by(meta_id=meta_id).order_by(db.asc(PeriodTemplate.start_time)).all()
+    data = []
+    for period in period_list:
+        data.append((period.start_time.strftime('%H:%M'), period.end_time.strftime('%H:%M')))
+
+    res = {'result':True, 'data':data, 'message':'The data of timetable template %s' %name}
+    return jsonify(res)
+
+
+@push.route('/api/timetable/addtemplate', methods=['POST'])
+@login_required
+def add_timetable_template():
+    form = TimetableForm()
+    if form.validate_on_submit():
+        pass
+

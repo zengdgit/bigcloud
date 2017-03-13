@@ -4,7 +4,7 @@
 # 2016/12/22 Chen Weijian : Init
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, IntegerField
+from wtforms import StringField, SubmitField, IntegerField, DateTimeField
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms.validators import DataRequired, Length,Required
 from .. import upload
@@ -43,3 +43,10 @@ class AppGroupForm(FlaskForm):
     name = StringField(id='name', validators=[DataRequired(), Length(1, 50)])
     description = StringField(id='description', validators=[DataRequired(), Length(1, 50)])
     apps = StringField(id='apps', validators=[])
+
+
+class TimetableForm(FlaskForm):
+    name = StringField(id='name', validators=[DataRequired(), Length(1, 50)])
+    course_num = IntegerField(id='course_num', validators=[DataRequired()])
+    course_interval = IntegerField(id='course_interval', validators=[DataRequired()])
+    start_time = DateTimeField(id='start_time', validators=[DataRequired])
