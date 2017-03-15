@@ -50,3 +50,10 @@ class TimetableForm(FlaskForm):
     course_num = IntegerField(id='course_num', validators=[DataRequired()])
     course_interval = IntegerField(id='course_interval', validators=[DataRequired()])
     start_time = DateTimeField(id='start_time', validators=[DataRequired])
+
+
+class FlavorForm(FlaskForm):
+    name = StringField(id='name', validators=[DataRequired(), Length(1, 50)])
+    cpunum = IntegerField(id='cpunum', validators=[DataRequired()])
+    ramnum = IntegerField(id='ramnum', validators=[DataRequired()])
+    disknum = IntegerField(id='disknum', validators=[DataRequired()])

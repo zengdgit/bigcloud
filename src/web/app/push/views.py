@@ -11,7 +11,7 @@ from ..models import Package, Application, OS, Language, CPU, FirstClassificatio
 from ..utils import checksum
 from flask_login import login_required, current_user
 
-from .forms import UploadForm, ApplicationForm, FunctionForm, AppGroupForm, TimetableForm
+from .forms import UploadForm, ApplicationForm, FunctionForm, AppGroupForm, TimetableForm, FlavorForm
 
 from .. import upload, logger
 
@@ -56,6 +56,18 @@ def function():
 @login_required
 def timetable():
     return render_template('push/push_timetable.html')
+
+@push.route('/flavor')
+@login_required
+def flavor():
+    name_list = db.session.query(TemplateMeta.id, TemplateMeta.name, FlavorTemplate.cpunum,
+                                 FlavorTemplate.ramnum, FlavorTemplate.disknum).join(FlavorTemplate,
+                                 isouter=True).filter(TemplateMeta.type=='flavor').all()
+    data = []
+    for i in name_list:
+        item = {"id": i[0], "name": i[1], "cpu": i[2], "ram": i[3], "disk": i[4]}
+        data.append(item)
+    return render_template('push/push_flavor.html', flavor_list=data)
 
 #################
 # function
@@ -591,3 +603,29 @@ def add_timetable_template():
     if form.validate_on_submit():
         pass
 
+
+@push.route('/api/flavor/modify/<int:meta_id>', methods=['POST'])
+@login_required
+def modify_flavor_template(meta_id):
+    form = FlavorForm()
+    res = {}
+    if form.validate_on_submit():
+        try:
+            meta = TemplateMeta.query.filter_by(id=meta_id).first()
+            flavor = FlavorTemplate.query.filter_by(meta_id=meta_id).first()
+            meta.name = form.name.data
+            flavor.cpunum = form.cpunum.data
+            flavor.ramnum = form.ramnum.data
+            flavor.disknum = form.disknum.data
+            db.session.commit()
+            res['result'] = True
+        except Exception as e:
+            import traceback
+            logger.error('Update flavor template fail, %s' %traceback.format_exc())
+            res['result'] = False
+            res['reason'] = 'Database fails'
+    else:
+        res['result'] = False
+        res['reason'] = 'Form data invalid'
+
+    return jsonify(res)

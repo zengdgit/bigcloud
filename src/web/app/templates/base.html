@@ -285,6 +285,13 @@
                             <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 时间表模板
                         </a>
                     </li>
+
+                    <li class="sidebar-nav-link">
+                        <a href="{{ url_for('push.flavor') }}"
+                           class="{{ 'sub-active' if request.path.startswith('/push/flavor') else '' }}">
+                            <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 桌面参数模板
+                        </a>
+                    </li>
                 </ul>
             </li>
 
